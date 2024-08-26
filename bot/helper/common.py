@@ -117,6 +117,7 @@ class TaskConfig:
         self.isTorrent = False
         self.as_med = False
         self.as_doc = False
+        self.chat_thread_id = None
         self.suproc = None
         self.thumb = None
         self.time = ""
@@ -280,7 +281,11 @@ class TaskConfig:
                     elif self.upDest.startswith("m:"):
                         self.userTransmission = IS_PREMIUM_USER
                         self.mixedLeech = self.userTransmission
-                    if self.upDest.isdigit() or self.upDest.startswith("-"):
+                    if "|" in self.upDest:
+                        self.upDest, self.chat_thread_id = list(
+                            map(int, self.upDest.split("|", 1))
+                        )
+                    elif self.upDest.isdigit() or self.upDest.startswith("-"):
                         self.upDest = int(self.upDest)
                     elif self.upDest.lower() == "pm":
                         self.upDest = self.userId

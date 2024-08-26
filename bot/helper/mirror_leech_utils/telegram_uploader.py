@@ -95,6 +95,7 @@ class TgUploader:
                         chat_id=self._listener.upDest,
                         text=msg,
                         disable_web_page_preview=True,
+                        message_thread_id=self._listener.chat_thread_id,
                         disable_notification=True,
                     )
                 else:
@@ -102,6 +103,7 @@ class TgUploader:
                         chat_id=self._listener.upDest,
                         text=msg,
                         disable_web_page_preview=True,
+                        message_thread_id=self._listener.chat_thread_id,
                         disable_notification=True,
                     )
                     self._is_private = self._sent_msg.chat.type.name == "PRIVATE"
