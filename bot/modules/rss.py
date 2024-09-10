@@ -647,7 +647,8 @@ Timeout: 60 sec. Argument -c for command and arguments
 
 
 async def rssMonitor():
-    if not config_dict["RSS_CHAT"]:
+    chat = config_dict["RSS_CHAT"]
+    if not chat:
         LOGGER.warning("RSS_CHAT not added! Shutting down rss scheduler...")
         scheduler.shutdown(wait=False)
         return
@@ -655,6 +656,18 @@ async def rssMonitor():
         scheduler.pause()
         return
     all_paused = True
+    rss_topic_id = rss_chat_id = None
+    if isinstance(chat, int):
+        rss_chat_id = chat
+    elif "|" in chat:
+        rss_chat_id, rss_topic_id = list(
+            map(
+                lambda x: int(x) if x.lstrip("-").isdigit() else x,
+                chat.split("|", 1),
+            )
+        )
+    elif chat.lstrip("-").isdigit():
+        rss_chat_id = int(chat)
     for user, items in list(rss_dict.items()):
         for title, data in items.items():
             try:
@@ -745,7 +758,7 @@ async def rssMonitor():
                     feed_msg += (
                         f"\n<b>Tag: </b><code>{data['tag']}</code> <code>{user}</code>"
                     )
-                    await sendRss(feed_msg)
+                    await sendRss(feed_msg, rss_chat_id, rss_topic_id)
                     feed_count += 1
                 async with rss_dict_lock:
                     if user not in rss_dict or not rss_dict[user].get(title, False):

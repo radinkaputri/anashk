@@ -283,9 +283,12 @@ class TaskConfig:
                         self.mixedLeech = self.userTransmission
                     if "|" in self.upDest:
                         self.upDest, self.chat_thread_id = list(
-                            map(int, self.upDest.split("|", 1))
+                            map(
+                                lambda x: int(x) if x.lstrip("-").isdigit() else x,
+                                self.upDest.split("|", 1),
+                            )
                         )
-                    elif self.upDest.isdigit() or self.upDest.startswith("-"):
+                    elif self.upDest.lstrip("-").isdigit():
                         self.upDest = int(self.upDest)
                     elif self.upDest.lower() == "pm":
                         self.upDest = self.userId
