@@ -129,7 +129,7 @@ You can control those values. Example: /cmd -sv 70:5(sample-duration:part-durati
 
 screenshot = """<b>ScreenShots</b>: -ss
 
-Create up to 10 screenshots for one video or folder of vidoes.
+Create screenshots for one video or folder of videos.
 /cmd -ss (it will take the default values which is 10 photos).
 You can control this value. Example: /cmd -ss 6."""
 
@@ -192,6 +192,9 @@ This will effect on all files. Formate: wordToReplace : wordToReplaceWith : sens
 mixed_leech = """Mixed leech: -ml
 /cmd link -ml (leech by user and bot sessionwith respect to size)"""
 
+thumbnail_layout = """Thumbnail Layout: -tl
+/cmd link -tl 3x3 (widthxheight) 3 photos in row and 3 photos in column"""
+
 YT_HELP_DICT = {
     "main": yt,
     "New-Name": f"{new_name}\nNote: Don't add file extension",
@@ -238,6 +241,7 @@ MIRROR_HELP_DICT = {
     "User-Download": user_download,
     "Name-Substitute": name_sub,
     "Mixed-Leech": mixed_leech,
+    "Thumbnail-Layout": thumbnail_layout,
 }
 
 CLONE_HELP_DICT = {

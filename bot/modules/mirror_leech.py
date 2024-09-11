@@ -108,6 +108,7 @@ class Mirror(TaskListener):
             "-ca": "",
             "-cv": "",
             "-ns": "",
+            "-tl": "",
         }
 
         arg_parser(input_list[1:], args)
@@ -132,6 +133,7 @@ class Mirror(TaskListener):
         self.convertVideo = args["-cv"]
         self.nameSub = args["-ns"]
         self.mixedLeech = args["-ml"]
+        self.thumbnail_layout = args["-tl"]
 
         headers = args["-h"]
         isBulk = args["-b"]
