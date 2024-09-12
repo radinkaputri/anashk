@@ -115,6 +115,8 @@ class TaskConfig:
         self.forceDownload = False
         self.forceUpload = False
         self.isTorrent = False
+        self.as_med = False
+        self.as_doc = False
         self.suproc = None
         self.thumb = None
         self.time = ""
@@ -331,11 +333,12 @@ class TaskConfig:
             self.maxSplitSize = MAX_SPLIT_SIZE if self.userTransmission else 2097152000
             self.splitSize = min(self.splitSize, self.maxSplitSize)
 
-            self.asDoc = (
-                self.userDict.get("as_doc", False)
-                or config_dict["AS_DOCUMENT"]
-                and "as_doc" not in self.userDict
-            )
+            if not self.as_doc:
+                self.as_doc = not self.as_med if self.as_med else (
+                    self.userDict.get("as_doc", False)
+                    or config_dict["AS_DOCUMENT"]
+                    and "as_doc" not in self.userDict
+                )
 
             self.thumbnail_layout = (
                 self.thumbnail_layout

@@ -291,6 +291,8 @@ class YtDlp(TaskListener):
         qual = ""
 
         args = {
+            "-doc": False,
+            "-med": False,
             "-s": False,
             "-b": False,
             "-z": False,
@@ -312,6 +314,7 @@ class YtDlp(TaskListener):
             "-ca": "",
             "-cv": "",
             "-ns": "",
+            "-tl": "",
         }
 
         arg_parser(input_list[1:], args)
@@ -338,6 +341,9 @@ class YtDlp(TaskListener):
         self.convertVideo = args["-cv"]
         self.nameSub = args["-ns"]
         self.mixedLeech = args["-ml"]
+        self.thumbnail_layout = args["-tl"]
+        self.as_doc = args["-doc"]
+        self.as_med = args["-med"]
 
         isBulk = args["-b"]
         folder_name = args["-m"]

@@ -178,6 +178,8 @@ def arg_parser(items, arg_base):
         "-fu",
         "-sync",
         "-ml",
+        "-doc",
+        "-med"
     }
     t = len(items)
     i = 0
@@ -191,7 +193,7 @@ def arg_parser(items, arg_base):
             if (
                 i + 1 == t
                 and part in bool_arg_set
-                or part in ["-s", "-j", "-f", "-fd", "-fu", "-sync", "-ml"]
+                or part in ["-s", "-j", "-f", "-fd", "-fu", "-sync", "-ml", "-doc", "-med"]
             ):
                 arg_base[part] = True
             else:

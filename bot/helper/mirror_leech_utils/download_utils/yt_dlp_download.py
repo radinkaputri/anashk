@@ -277,7 +277,7 @@ class YoutubeDLHelper:
         if qual.startswith("ba/b"):
             self._listener.name = f"{base_name}{self._ext}"
 
-        if self._listener.isLeech:
+        if self._listener.isLeech and not self._listener.thumbnail_layout:
             self.opts["postprocessors"].append(
                 {
                     "format": "jpg",
@@ -299,7 +299,10 @@ class YoutubeDLHelper:
         ]:
             self.opts["postprocessors"].append(
                 {
-                    "already_have_thumbnail": self._listener.isLeech,
+
+                    "already_have_thumbnail": bool(
+                        self._listener.isLeech and not self._listener.thumbnail_layout
+                    ),
                     "key": "EmbedThumbnail",
                 }
             )
