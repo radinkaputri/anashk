@@ -149,7 +149,7 @@ programming in Python.
 > feurl.com, upload.ee, pixeldrain.com, racaty.net, 1fichier.com, 1drv.ms (Only works for file not folder or business
 > account), filelions.com, streamwish.com, send.cm (file/folders), solidfiles.com, linkbox.to (file/folders),
 > shrdsk.me (
-> sharedisk.io), akmfiles.com, wetransfer.com, pcloud.link, gofile.io (file/folders), easyupload.io, mdisk.me (with
+> sharedisk.io), akmfiles.com, wetransfer.com, pcloud.link, gofile.io (file/folders), mega.nz, easyupload.io, mdisk.me (with
 > ytdl),
 > tmpsend.com, qiwi.gg, berkasdrive.com, mp4upload.com, terabox.com (file/folders) (you need to add cookies txt with
 > name) [terabox.txt](https://github.com/ytdl-org/youtube-dl#how-do-i-pass-cookies-to-youtube-dl).
@@ -317,11 +317,16 @@ quotes, even if it's `Int`, `Bool` or `List`.
       from qbittorrent.conf or bsetting command.
 
 **8. JDownloader**
-
+- Not Support on heroku so don't add any credentials here
 - `JD_EMAIL`: jdownlaoder email sign up on [JDownloader](https://my.jdownloader.org/)
 - `JD_PASS`: jdownlaoder password
 
-**9. RSS**
+**9. MEGA**
+
+- `MEGA_EMAIL`: E-Mail used to sign-in on [mega.io](https://mega.io) for using premium account. `Str`
+- `MEGA_PASSWORD`: Password for [mega.io](https://mega.io) account. `Str`
+
+**10. RSS**
 
 - `RSS_DELAY`: Time in seconds for rss refresh interval. Recommended `600` second at least. Default is `600` in
   sec. `Int`
@@ -333,7 +338,7 @@ quotes, even if it's `Int`, `Bool` or `List`.
       with `USER_STRING_SESSION` add group id for `RSS_CHAT`. If `DATABASE_URL` not added you will miss the feeds while
       bot offline.
 
-**10. Queue System**
+**11. Queue System**
 
 - `QUEUE_ALL`: Number of parallel tasks of downloads and uploads. For example if 20 task added and `QUEUE_ALL` is `8`,
   then the summation of uploading and downloading tasks are 8 and the rest in queue. `Int`. **NOTE**: if you want to
@@ -342,7 +347,7 @@ quotes, even if it's `Int`, `Bool` or `List`.
 - `QUEUE_DOWNLOAD`: Number of all parallel downloading tasks. `Int`
 - `QUEUE_UPLOAD`: Number of all parallel uploading tasks. `Int`
 
-**11. Torrent Search**
+**12. Torrent Search**
 
 - `SEARCH_API_LINK`: Search api app link. Get your api from deploying
   this [repository](https://github.com/Ryuk-me/Torrent-Api-py). `Str`
