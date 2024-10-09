@@ -19,10 +19,11 @@ from pymongo.server_api import ServerApi
 from pyrogram import Client as tgClient, enums
 from qbittorrentapi import Client as qbClient
 from socket import setdefaulttimeout
-from subprocess import Popen, run
-from time import time
+from subprocess import Popen, run, check_output
+from time import time, sleep
 from tzlocal import get_localzone
 from uvloop import install
+from threading import Thread
 
 # from faulthandler import enable as faulthandler_enable
 # faulthandler_enable()
@@ -451,12 +452,6 @@ if ospath.exists("list_drives.txt"):
             else:
                 INDEX_URLS.append("")
 
-if BASE_URL:
-    Popen(
-        f"gunicorn web.wserver:app --bind 0.0.0.0:{BASE_URL_PORT} --worker-class gevent",
-        shell=True,
-    )
-
 if ospath.exists("accounts.zip"):
     if ospath.exists("accounts"):
         run(["rm", "-rf", "accounts"])
@@ -466,63 +461,75 @@ if ospath.exists("accounts.zip"):
 if not ospath.exists("accounts"):
     config_dict["USE_SERVICE_ACCOUNTS"] = False
 
+PORT = environ.get("PORT")
+Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT} --worker-class gevent", shell=True)
 
-def get_qb_client():
-    return qbClient(
-        host="localhost",
-        port=8090,
-        VERIFY_WEBUI_CERTIFICATE=False,
-        REQUESTS_ARGS={"timeout": (30, 60)},
-    )
+log_info("Starting qBittorrent-Nox")
+run(["xnox", "-d", "--profile=."])
+if not ospath.exists('.netrc'):
+    with open('.netrc', 'w'):
+       pass
+run(["chmod", "600", ".netrc"])
+run(["cp", ".netrc", "/root/.netrc"])
 
+trackers = check_output("curl -Ns https://raw.githubusercontent.com/XIU2/TrackersListCollection/master/all.txt https://ngosang.github.io/trackerslist/trackers_all_http.txt https://newtrackon.com/api/all https://raw.githubusercontent.com/hezhijie0327/Trackerslist/main/trackerslist_tracker.txt | awk '$0' | tr '\n\n' ','", shell=True).decode('utf-8').rstrip(',')
+with open("a2c.conf", "a+") as a:
+    if TORRENT_TIMEOUT:
+        a.write(f"bt-stop-timeout={TORRENT_TIMEOUT}\n")
+    a.write(f"bt-tracker=[{trackers}]")
+run(["xria", "--conf-path=/usr/src/app/a2c.conf"])
 
-aria2c_global = [
-    "bt-max-open-files",
-    "download-result",
-    "keep-unfinished-download-result",
-    "log",
-    "log-level",
-    "max-concurrent-downloads",
-    "max-download-result",
-    "max-overall-download-limit",
-    "save-session",
-    "max-overall-upload-limit",
-    "optimize-concurrent-downloads",
-    "save-cookies",
-    "server-stat-of",
-]
 
 log_info("Creating client from BOT_TOKEN")
-bot = tgClient(
-    "bot",
-    TELEGRAM_API,
-    TELEGRAM_HASH,
-    bot_token=BOT_TOKEN,
-    workers=1000,
-    parse_mode=enums.ParseMode.HTML,
-    max_concurrent_transmissions=10,
-).start()
+bot = tgClient('bot', TELEGRAM_API, TELEGRAM_HASH, bot_token = BOT_TOKEN, workers = 1000, parse_mode = enums.ParseMode.HTML).start()
 bot_loop = bot.loop
 bot_name = bot.me.username
 
 scheduler = AsyncIOScheduler(timezone=str(get_localzone()), event_loop=bot_loop)
 
+aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
+
+
+def get_qb_client():
+    return qbClient(host="localhost", port=8090, VERIFY_WEBUI_CERTIFICATE=False, REQUESTS_ARGS={'timeout': (30, 60)})
+
+
+def aria2c_init():
+    try:
+        log_info("Initializing Aria2c")
+        link = "https://linuxmint.com/torrents/lmde-5-cinnamon-64bit.iso.torrent"
+        dire = '/usr/src/app/downloads/'.rstrip("/")
+        aria2.add_uris([link], {'dir': dire})
+        sleep(3)
+        downloads = aria2.get_downloads()
+        sleep(10)
+        aria2.remove(downloads, force=True, files=True, clean=True)
+    except Exception as e:
+        log_error(f"Aria2c initializing error: {e}")
+
+
+Thread(target=aria2c_init).start()
+sleep(1.5)
+
+aria2c_global = ['bt-max-open-files', 'download-result', 'keep-unfinished-download-result', 'log', 'log-level', 'max-concurrent-downloads', 'max-download-result', 'max-overall-download-limit', 'save-session', 'max-overall-upload-limit', 'optimize-concurrent-downloads', 'save-cookies', 'server-stat-of']
+
+if not aria2_options:
+    aria2_options = aria2.client.get_global_option()
+else:
+    a2c_glo = {op: aria2_options[op]
+               for op in aria2c_global if op in aria2_options}
+    aria2.set_global_options(a2c_glo)
+
+qb_client = get_qb_client()
 if not qbit_options:
-    qbit_options = dict(get_qb_client().app_preferences())
-    del qbit_options["listen_port"]
+    qbit_options = dict(qb_client.app_preferences())
+    del qbit_options['listen_port']
     for k in list(qbit_options.keys()):
-        if k.startswith("rss"):
+        if k.startswith('rss'):
             del qbit_options[k]
 else:
     qb_opt = {**qbit_options}
     for k, v in list(qb_opt.items()):
         if v in ["", "*"]:
             del qb_opt[k]
-    get_qb_client().app_set_preferences(qb_opt)
-
-aria2 = ariaAPI(ariaClient(host="http://localhost", port=6800, secret=""))
-if not aria2_options:
-    aria2_options = aria2.client.get_global_option()
-else:
-    a2c_glo = {op: aria2_options[op] for op in aria2c_global if op in aria2_options}
-    aria2.set_global_options(a2c_glo)
+    qb_client.app_set_preferences(qb_opt)
