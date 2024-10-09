@@ -140,13 +140,6 @@ if DATABASE_URL:
 else:
     config_dict = {}
 
-if not ospath.exists(".netrc"):
-    with open(".netrc", "w"):
-        pass
-run(
-    "chmod 600 .netrc && cp .netrc /root/.netrc && chmod +x aria-nox.sh && ./aria-nox.sh",
-    shell=True,
-)
 
 OWNER_ID = environ.get("OWNER_ID", "")
 if len(OWNER_ID) == 0:
@@ -228,6 +221,13 @@ if len(USER_SESSION_STRING) != 0:
 else:
     IS_PREMIUM_USER = False
     user = ""
+
+MEGA_EMAIL = environ.get("MEGA_EMAIL", "")
+MEGA_PASSWORD = environ.get("MEGA_PASSWORD", "")
+if len(MEGA_EMAIL) == 0 or len(MEGA_PASSWORD) == 0:
+    log_warning("MEGA Credentials not provided!")
+    MEGA_EMAIL = ""
+    MEGA_PASSWORD = ""
 
 JD_EMAIL = environ.get("JD_EMAIL", "")
 JD_PASS = environ.get("JD_PASS", "")
@@ -378,6 +378,9 @@ NAME_SUBSTITUTE = "" if len(NAME_SUBSTITUTE) == 0 else NAME_SUBSTITUTE
 MIXED_LEECH = environ.get("MIXED_LEECH", "")
 MIXED_LEECH = MIXED_LEECH.lower() == "true" and IS_PREMIUM_USER
 
+SET_COMMANDS = environ.get('SET_COMMANDS', '')
+SET_COMMANDS = SET_COMMANDS.lower() == 'true'
+
 config_dict = {
     "AS_DOCUMENT": AS_DOCUMENT,
     "AUTHORIZED_CHATS": AUTHORIZED_CHATS,
@@ -385,6 +388,7 @@ config_dict = {
     "BASE_URL_PORT": BASE_URL_PORT,
     "BOT_TOKEN": BOT_TOKEN,
     "CMD_SUFFIX": CMD_SUFFIX,
+    "SET_COMMANDS": SET_COMMANDS,
     "DATABASE_URL": DATABASE_URL,
     "DEFAULT_UPLOAD": DEFAULT_UPLOAD,
     "DOWNLOAD_DIR": DOWNLOAD_DIR,
@@ -395,6 +399,8 @@ config_dict = {
     "INCOMPLETE_TASK_NOTIFIER": INCOMPLETE_TASK_NOTIFIER,
     "INDEX_URL": INDEX_URL,
     "IS_TEAM_DRIVE": IS_TEAM_DRIVE,
+    "MEGA_EMAIL": MEGA_EMAIL,
+    "MEGA_PASSWORD": MEGA_PASSWORD,
     "JD_EMAIL": JD_EMAIL,
     "JD_PASS": JD_PASS,
     "LEECH_DUMP_CHAT": LEECH_DUMP_CHAT,

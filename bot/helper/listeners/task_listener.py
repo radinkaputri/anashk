@@ -272,7 +272,7 @@ class TaskListener(TaskConfig):
                 if fmsg != "":
                     await sendMessage(self.message, msg + fmsg)
         else:
-            msg += f"\n\n<b>Type: </b>{mime_type}"
+            msg += f"\n<b>Type: </b>{mime_type}"
             if mime_type == "Folder":
                 msg += f"\n<b>SubFolders: </b>{folders}"
                 msg += f"\n<b>Files: </b>{files}"
@@ -312,9 +312,9 @@ class TaskListener(TaskConfig):
                             buttons.ubutton("🌐 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\n\nPath: <code>{rclonePath}</code>"
+                msg += f"\nPath: <code>{rclonePath}</code>"
                 button = None
-            msg += f"\n\n<b>cc: </b>{self.tag}"
+            msg += f"\n<b>cc: </b>{self.tag}"
             await sendMessage(self.message, msg, button)
         if self.seed:
             if self.newDir:

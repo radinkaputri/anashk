@@ -6,6 +6,7 @@ from asyncio import (
     sleep,
 )
 from asyncio.subprocess import PIPE
+from pyrogram.types import BotCommand
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial, wraps
 
@@ -17,6 +18,7 @@ from bot.helper.ext_utils.help_messages import (
 )
 from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.telegram_helper.button_build import ButtonMaker
+from bot.helper.telegram_helper.bot_commands import BotCommands
 
 THREADPOOL = ThreadPoolExecutor(max_workers=1000)
 
@@ -54,6 +56,27 @@ def create_help_buttons():
         buttons.ibutton(name, f"help clone {name}")
     buttons.ibutton("Close", "help close")
     COMMAND_USAGE["clone"] = [CLONE_HELP_DICT["main"], buttons.build_menu(3)]
+
+
+async def set_commands(bot):
+    if config_dict['SET_COMMANDS']:
+        await bot.set_bot_commands(commands=[
+            BotCommand(BotCommands.StartCommand, "Start the bot"),
+            BotCommand(BotCommands.MirrorCommand[0], "Start mirroring (or " + BotCommands.MirrorCommand[1] + ")"),
+            BotCommand(BotCommands.LeechCommand[0], "Start leeching (or " + BotCommands.LeechCommand[1] + ")"),
+            BotCommand(BotCommands.QbMirrorCommand[0], "Start qb mirroring (or " + BotCommands.QbMirrorCommand[1] + ")"),
+            BotCommand(BotCommands.QbLeechCommand[0], "Start qb leeching (or " + BotCommands.QbLeechCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlCommand[0], "Mirror youtube file (or " + BotCommands.YtdlCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlLeechCommand[0], "Leech youtube file (or " + BotCommands.YtdlLeechCommand[1] + ")"),
+            BotCommand(BotCommands.ListCommand, "List files in Google Drive"),
+            BotCommand(BotCommands.SearchCommand, "Search torrents"),
+            BotCommand(BotCommands.CancelTaskCommand, "Cancel any task"),
+            BotCommand(BotCommands.CancelAllCommand, "Cancel all tasks"),
+            BotCommand(BotCommands.PingCommand, "Ping the bot"),
+            BotCommand(BotCommands.HelpCommand, "Get help"),
+            BotCommand(BotCommands.UserSetCommand[0], "Open user setting menu (or " + BotCommands.UserSetCommand[1] + ")"),
+            BotCommand(BotCommands.RestartCommand, "Restart the bot (only owner)"),
+        ])
 
 
 def bt_selection_buttons(id_):

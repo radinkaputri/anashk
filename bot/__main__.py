@@ -1,6 +1,7 @@
 from aiofiles import open as aiopen
 from aiofiles.os import path as aiopath, remove
 from asyncio import gather, create_subprocess_exec, sleep
+from pyrogram.filters import command
 from os import execl as osexecl
 from psutil import (
     disk_usage,
@@ -26,7 +27,7 @@ from bot import (
     INCOMPLETE_TASK_NOTIFIER,
     scheduler,
 )
-from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, create_help_buttons
+from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, create_help_buttons, set_commands
 from .helper.ext_utils.db_handler import DbManager
 from .helper.ext_utils.files_utils import clean_all, exit_clean_up
 from .helper.ext_utils.jdownloader_booter import jdownloader
@@ -163,7 +164,7 @@ NOTE: Try each command without any argument to see more detalis.
 /{BotCommands.UserSetCommand[0]} or /{BotCommands.UserSetCommand[1]} [query]: Users settings.
 /{BotCommands.BotSetCommand[0]} or /{BotCommands.BotSetCommand[1]} [query]: Bot settings.
 /{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
-/{BotCommands.CancelTaskCommand[0]} or /{BotCommands.CancelTaskCommand[1]} [gid]: Cancel task by gid or reply.
+/{BotCommands.CancelTaskCommand} [gid]: Cancel task by gid or reply.
 /{BotCommands.ForceStartCommand[0]} or /{BotCommands.ForceStartCommand[1]} [gid]: Force start task by gid or reply.
 /{BotCommands.CancelAllCommand} [query]: Cancel all [status] tasks.
 /{BotCommands.ListCommand} [query]: Search in Google Drive(s).
@@ -247,6 +248,7 @@ async def main():
         telegraph.create_account(),
         rclone_serve_booter(),
         sync_to_async(start_aria2_listener, wait=False),
+        set_commands(bot),
     )
     create_help_buttons()
 
