@@ -10,7 +10,6 @@ bencoding
 cinemagoer
 cloudscraper
 dnspython
-electrogram
 feedparser
 flask
 gevent
@@ -33,6 +32,7 @@ pycryptodome
 python-dotenv
 pyshorteners
 python-magic
+pyrofork==2.2.11
 qbittorrent-api
 requests
 speedtest-cli
