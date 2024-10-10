@@ -11,7 +11,7 @@ from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import editMessage, sendMessage
+from bot.helper.telegram_helper.message_utils import editMessage, sendMessage, auto_delete_message
 
 PLUGINS = []
 SITES = None
@@ -84,6 +84,7 @@ async def _search(key, site, message, method):
                     message,
                     f"No result found for <i>{key}</i>\nTorrent Site:- <i>{SITES.get(site)}</i>",
                 )
+                await auto_delete_message(message)
                 return
             msg = f"<b>Found {min(search_results['total'], TELEGRAPH_LIMIT)}</b>"
             if method == "apitrend":
@@ -97,6 +98,7 @@ async def _search(key, site, message, method):
             search_results = search_results["data"]
         except Exception as e:
             await editMessage(message, str(e))
+            await auto_delete_message(message)
             return
     else:
         LOGGER.info(f"PLUGINS Searching: {key} from {site}")
@@ -122,6 +124,7 @@ async def _search(key, site, message, method):
                 message,
                 f"No result found for <i>{key}</i>\nTorrent Site:- <i>{site.capitalize()}</i>",
             )
+            await auto_delete_message(message)
             return
         msg = f"<b>Found {min(total_results, TELEGRAPH_LIMIT)}</b>"
         msg += f" <b>result(s) for <i>{key}</i>\nTorrent Site:- <i>{site.capitalize()}</i></b>"
@@ -132,6 +135,7 @@ async def _search(key, site, message, method):
     buttons.ubutton("🔎 VIEW", link)
     button = buttons.build_menu(1)
     await editMessage(message, msg, button)
+    await auto_delete_message(message)
 
 
 async def _getResult(search_results, key, message, method):
@@ -312,6 +316,7 @@ async def torrentSearchUpdate(_, query):
     else:
         await query.answer()
         await editMessage(message, "Search has been canceled!")
+        await auto_delete_message(message)
 
 
 bot.add_handler(

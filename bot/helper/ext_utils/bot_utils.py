@@ -1,4 +1,5 @@
 from httpx import AsyncClient
+from random import choice
 from asyncio import (
     create_subprocess_exec,
     create_subprocess_shell,
@@ -10,7 +11,7 @@ from pyrogram.types import BotCommand
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial, wraps
 
-from bot import user_data, config_dict, bot_loop, LOGGER, OWNER_ID
+from bot import bot, user_data, config_dict, bot_loop, LOGGER, OWNER_ID
 from bot.helper.ext_utils.help_messages import (
     YT_HELP_DICT,
     MIRROR_HELP_DICT,
@@ -46,9 +47,11 @@ async def delete_links(message):
     if config_dict['DELETE_LINKS']:
         try:
             if reply_to := message.reply_to_message:
+                await sleep(4)
                 await reply_to.delete()
                 await message.delete()
             else:
+                await sleep(4)
                 await message.delete()
         except Exception as e:
             LOGGER.error(str(e))
@@ -70,6 +73,37 @@ def create_help_buttons():
     buttons.ibutton("Close", "help close")
     COMMAND_USAGE["clone"] = [CLONE_HELP_DICT["main"], buttons.build_menu(3)]
 
+async def send_react(message):
+    try:
+        chat_id = int(message.chat.id)
+        chat_info = await bot.get_chat(chat_id)
+        available_reactions = chat_info.available_reactions
+
+        full_emoji_set = {
+            "👌",
+            "🔥",
+            "🕊",
+            "👀",
+            "☃️",
+            "💯",
+            "⚡",
+        }
+
+        if available_reactions:
+            if getattr(available_reactions, "all_are_enabled", False):
+                emojis = full_emoji_set
+            else:
+                emojis = {
+                    reaction.emoji for reaction in available_reactions.reactions
+                }
+
+            await message.react(choice(list(emojis)), big=True)
+    except AttributeError as e:
+        LOGGER.error(f"AttributeError: {e}")
+    except TypeError as e:
+        LOGGER.error(f"TypeError: {e}")
+    except Exception as e:
+        LOGGER.error(f"An unexpected error occurred: {e}")
 
 async def set_commands(bot):
     if config_dict['SET_COMMANDS']:
@@ -77,13 +111,14 @@ async def set_commands(bot):
             BotCommand(BotCommands.StartCommand, "Start the bot"),
             BotCommand(BotCommands.MirrorCommand[0], "Start mirroring (or " + BotCommands.MirrorCommand[1] + ")"),
             BotCommand(BotCommands.LeechCommand[0], "Start leeching (or " + BotCommands.LeechCommand[1] + ")"),
-            BotCommand(BotCommands.QbMirrorCommand[0], "Start qb mirroring (or " + BotCommands.QbMirrorCommand[1] + ")"),
-            BotCommand(BotCommands.QbLeechCommand[0], "Start qb leeching (or " + BotCommands.QbLeechCommand[1] + ")"),
-            BotCommand(BotCommands.YtdlCommand[0], "Mirror youtube file (or " + BotCommands.YtdlCommand[1] + ")"),
-            BotCommand(BotCommands.YtdlLeechCommand[0], "Leech youtube file (or " + BotCommands.YtdlLeechCommand[1] + ")"),
-            BotCommand(BotCommands.ListCommand, "List files in Google Drive"),
-            BotCommand(BotCommands.SearchCommand, "Search torrents"),
-            BotCommand(BotCommands.CancelTaskCommand, "Cancel any task"),
+            BotCommand(BotCommands.QbMirrorCommand[0], "Start torrent mirroring (or " + BotCommands.QbMirrorCommand[1] + ")"),
+            BotCommand(BotCommands.QbLeechCommand[0], "Start torrent leeching (or " + BotCommands.QbLeechCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlCommand[0], "Mirror with ytdlp (or " + BotCommands.YtdlCommand[1] + ")"),
+            BotCommand(BotCommands.YtdlLeechCommand[0], "Leech with ytdlp (or " + BotCommands.YtdlLeechCommand[1] + ")"),
+            BotCommand(BotCommands.ListCommand, "Search files in mirror Drive"),
+            BotCommand(BotCommands.CloneCommand, "Cloning files to mirror Drive"),
+            BotCommand(BotCommands.SearchCommand, "Search something from torrents site"),
+            BotCommand(BotCommands.CancelTaskCommand, "Cancel one task"),
             BotCommand(BotCommands.CancelAllCommand, "Cancel all tasks"),
             BotCommand(BotCommands.PingCommand, "Ping the bot"),
             BotCommand(BotCommands.HelpCommand, "Get help"),
@@ -113,7 +148,7 @@ async def get_telegraph_list(telegraph_content):
     path = [
         (
             await telegraph.create_page(
-                title="Mirror-Leech-Bot Drive Search", content=content
+                title="Drive Search", content=content
             )
         )["path"]
         for content in telegraph_content

@@ -83,14 +83,19 @@ async def deleteMessage(message):
     except Exception as e:
         LOGGER.error(str(e))
 
+async def five_minute_del(message):
+    await sleep(300) # Delay time
+    await deleteMessage(message)
 
 async def auto_delete_message(cmd_message=None, bot_message=None):
     await sleep(60)
-    if cmd_message is not None:
-        await deleteMessage(cmd_message)
-    if bot_message is not None:
-        await deleteMessage(bot_message)
-
+    try:
+        if cmd_message is not None:
+            await deleteMessage(cmd_message)
+        if bot_message is not None:
+            await deleteMessage(bot_message)
+    except Exception as e:
+        LOGGER.error(f"Error deleting messages: {str(e)}")
 
 async def delete_status():
     async with task_dict_lock:

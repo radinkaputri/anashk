@@ -28,6 +28,7 @@ from bot.helper.telegram_helper.message_utils import (
     editMessage,
     sendFile,
     deleteMessage,
+    five_minute_del,
 )
 
 handler_dict = {}
@@ -210,11 +211,14 @@ async def update_user_settings(query):
     await editMessage(query.message, msg, button)
 
 
+@new_thread
 async def user_settings(_, message):
     from_user = message.from_user
     handler_dict[from_user.id] = False
     msg, button = await get_user_settings(from_user)
-    await sendMessage(message, msg, button)
+    umsg = await sendMessage(message, msg, button)
+    await five_minute_del(message)
+    await deleteMessage(umsg)
 
 
 async def set_thumb(_, message, pre_event):

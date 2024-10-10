@@ -38,7 +38,12 @@ from .helper.mirror_leech_utils.rclone_utils.serve import rclone_serve_booter
 from .helper.telegram_helper.bot_commands import BotCommands
 from .helper.telegram_helper.button_build import ButtonMaker
 from .helper.telegram_helper.filters import CustomFilters
-from .helper.telegram_helper.message_utils import sendMessage, editMessage, sendFile
+from .helper.telegram_helper.message_utils import (
+    sendMessage, 
+    editMessage, 
+    auto_delete_message, 
+    sendFile
+)
 from .modules import (
     authorize,
     cancel_task,
@@ -60,7 +65,6 @@ from .modules import (
     force_start,
 )
 
-bot_uptime = get_readable_time(time() - botStartTime)
 async def stats(_, message):
     if await aiopath.exists(".git"):
         last_commit = await cmd_exec(
@@ -72,6 +76,7 @@ async def stats(_, message):
     total, used, free, disk = disk_usage("/")
     swap = swap_memory()
     memory = virtual_memory()
+    bot_uptime = get_readable_time(time() - botStartTime)
     stats = (
         f"<b>Commit Date:</b> {last_commit}\n\n"
         f"<b>Bot Uptime:</b> {bot_uptime}\n"
@@ -90,26 +95,31 @@ async def stats(_, message):
         f"<b>Memory Free:</b> {get_readable_file_size(memory.available)}\n"
         f"<b>Memory Used:</b> {get_readable_file_size(memory.used)}\n"
     )
-    await sendMessage(message, stats)
+    smsg = await sendMessage(message, stats)
+    await auto_delete_message(smsg, message)
 
 
 async def start(client, message):
     buttons = ButtonMaker()
-    buttons.ubutton("Repo", "https://www.github.com/anasty17/mirror-leech-telegram-bot")
-    buttons.ubutton("Owner", "https://t.me/u_xzyp")
+    buttons.ubutton("owner", "tg://user?id=7011286069")
+    
+    is_authorized = await CustomFilters.authorized(client, message)
+    status = "Auth" if is_authorized else "None"
+
+    if not is_authorized:
+        buttons.ubutton("join", "https://t.me/zyradaexmirror")
+        
     reply_markup = buttons.build_menu(2)
-    if await CustomFilters.authorized(client, message):
-        start_string = f"""
-This bot can mirror all your links|files|torrents to Google Drive or any rclone cloud or to telegram.
-Type /{BotCommands.HelpCommand} to get a list of available commands
+
+    start_string = f"""
+<b>I can help you mirror links, files, or torrents to Google Drive, rclone cloud, or Telegram.
+
+Type /{BotCommands.HelpCommand} to see the list of commands.
+
+Uptime: {get_readable_time(time() - botStartTime)} | Status? {status}</b>
 """
-        await sendMessage(message, start_string, reply_markup)
-    else:
-        await sendMessage(
-            message,
-            "You Are not authorized user! Deploy your own mirror-leech bot",
-            reply_markup,
-        )
+
+    await sendMessage(message, start_string, reply_markup)
 
 
 async def restart(_, message):
@@ -151,25 +161,32 @@ async def log(_, message):
 help_string = f"""
 <b>List available command</b>
 Try each command without any argument to see more detalis.<blockquote expandable>
+<b>Mirror</b>
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
+/{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
 /{BotCommands.QbMirrorCommand[0]} or /{BotCommands.QbMirrorCommand[1]}: Start Mirroring to Google Drive using qBittorrent.
 /{BotCommands.JdMirrorCommand[0]} or /{BotCommands.JdMirrorCommand[1]}: Start Mirroring to Google Drive using JDownloader.
-/{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
+
+<b>Leech</b>
 /{BotCommands.LeechCommand[0]} or /{BotCommands.LeechCommand[1]}: Start leeching to Telegram.
 /{BotCommands.QbLeechCommand[0]} or /{BotCommands.QbLeechCommand[1]}: Start leeching using qBittorrent.
 /{BotCommands.JdLeechCommand[0]} or /{BotCommands.JdLeechCommand[1]}: Start leeching using JDownloader.
 /{BotCommands.YtdlLeechCommand[0]} or /{BotCommands.YtdlLeechCommand[1]}: Leech yt-dlp supported link.
+
+<b>Google Drive & Torrent</b>
 /{BotCommands.CloneCommand} [drive_url]: Copy file/folder to Google Drive.
 /{BotCommands.CountCommand} [drive_url]: Count file/folder of Google Drive.
 /{BotCommands.DeleteCommand} [drive_url]: Delete file/folder from Google Drive (Only Owner & Sudo).
+/{BotCommands.ListCommand} [query]: Search in Google Drive(s).
+/{BotCommands.SearchCommand} [query]: Search for torrents with API.
+
+<b>Bot Utility</b>
 /{BotCommands.UserSetCommand[0]} or /{BotCommands.UserSetCommand[1]} [query]: Users settings.
 /{BotCommands.BotSetCommand[0]} or /{BotCommands.BotSetCommand[1]} [query]: Bot settings.
 /{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
 /{BotCommands.CancelTaskCommand} [gid]: Cancel task by gid or reply.
 /{BotCommands.ForceStartCommand[0]} or /{BotCommands.ForceStartCommand[1]} [gid]: Force start task by gid or reply.
 /{BotCommands.CancelAllCommand} [query]: Cancel all [status] tasks.
-/{BotCommands.ListCommand} [query]: Search in Google Drive(s).
-/{BotCommands.SearchCommand} [query]: Search for torrents with API.
 /{BotCommands.StatusCommand}: Shows a status of all the downloads.
 /{BotCommands.StatsCommand}: Show stats of the machine where the bot is hosted in.
 /{BotCommands.PingCommand}: Check how long it takes to Ping the Bot (Only Owner & Sudo).
@@ -190,7 +207,8 @@ Try each command without any argument to see more detalis.<blockquote expandable
 
 
 async def bot_help(_, message):
-    await sendMessage(message, help_string)
+    hmsg = await sendMessage(message, help_string)
+    await auto_delete_message(hmsg, message)
 
 
 async def restart_notification():
@@ -220,11 +238,11 @@ async def restart_notification():
     if INCOMPLETE_TASK_NOTIFIER and DATABASE_URL:
         if notifier_dict := await DbManager().get_incomplete_tasks():
             for cid, data in notifier_dict.items():
-                msg = "Restarted Successfully!" if cid == chat_id else "Bot Restarted!"
+                msg = "Restarted Successfully!" if cid == chat_id else "Bot Restarted!\nDue to Overloading Task!!"
                 for tag, links in data.items():
-                    msg += f"\n\n{tag}: "
+                    msg += f"\n\nTask {tag}"
                     for index, link in enumerate(links, start=1):
-                        msg += f" <a href='{link}'>{index}</a> |"
+                        msg += f"\n{index}. {link}\n"
                         if len(msg.encode()) > 4000:
                             await send_incompelete_task_message(cid, msg)
                             msg = ""
@@ -273,7 +291,7 @@ async def main():
     bot.add_handler(
         MessageHandler(
             bot_help,
-            filters=command(BotCommands.HelpCommand) & CustomFilters.authorized,
+            filters=command(BotCommands.HelpCommand)
         )
     )
     bot.add_handler(
