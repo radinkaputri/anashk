@@ -12,6 +12,7 @@ from bot.helper.ext_utils.status_utils import (
 class ExtractStatus:
     def __init__(self, listener, gid):
         self.listener = listener
+        self.engine = "P7zip"
         self._size = self.listener.size
         self._gid = gid
         self._start_time = time()

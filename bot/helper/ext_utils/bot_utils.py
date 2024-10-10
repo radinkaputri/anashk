@@ -10,7 +10,7 @@ from pyrogram.types import BotCommand
 from concurrent.futures import ThreadPoolExecutor
 from functools import partial, wraps
 
-from bot import user_data, config_dict, bot_loop
+from bot import user_data, config_dict, bot_loop, LOGGER, OWNER_ID
 from bot.helper.ext_utils.help_messages import (
     YT_HELP_DICT,
     MIRROR_HELP_DICT,
@@ -20,7 +20,7 @@ from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.telegram_helper.bot_commands import BotCommands
 
-THREADPOOL = ThreadPoolExecutor(max_workers=1000)
+THREADPOOL = ThreadPoolExecutor(max_workers=9999)
 
 COMMAND_USAGE = {}
 
@@ -39,6 +39,19 @@ class setInterval:
     def cancel(self):
         self.task.cancel()
 
+async def delete_links(message):
+    if message.from_user.id == OWNER_ID and message.chat.type == message.chat.type.PRIVATE:
+        return
+
+    if config_dict['DELETE_LINKS']:
+        try:
+            if reply_to := message.reply_to_message:
+                await reply_to.delete()
+                await message.delete()
+            else:
+                await message.delete()
+        except Exception as e:
+            LOGGER.error(str(e))
 
 def create_help_buttons():
     buttons = ButtonMaker()

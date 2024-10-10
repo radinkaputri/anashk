@@ -2,6 +2,7 @@ from aiofiles.os import path as aiopath, listdir, makedirs, remove
 from aioshutil import move
 from asyncio import sleep, gather
 from html import escape
+from time import time
 from requests import utils as rutils
 
 from bot import (
@@ -29,7 +30,7 @@ from bot.helper.ext_utils.files_utils import (
     join_files,
 )
 from bot.helper.ext_utils.links_utils import is_gdrive_id
-from bot.helper.ext_utils.status_utils import get_readable_file_size
+from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from bot.helper.ext_utils.task_manager import start_from_queued, check_running_tasks
 from bot.helper.mirror_leech_utils.gdrive_utils.upload import gdUpload
 from bot.helper.mirror_leech_utils.rclone_utils.transfer import RcloneTransferHelper
@@ -49,6 +50,7 @@ from bot.helper.telegram_helper.message_utils import (
 class TaskListener(TaskConfig):
     def __init__(self):
         super().__init__()
+        self.time = time()
 
     async def clean(self):
         try:
@@ -252,7 +254,7 @@ class TaskListener(TaskConfig):
             and DATABASE_URL
         ):
             await DbManager().rm_complete_task(self.message.link)
-        msg = f"<b>Name: </b><code>{escape(self.name)}</code>\n\n<b>Size: </b>{get_readable_file_size(self.size)}"
+        msg = f"<b>Name: </b><code>{escape(self.name)}</code>\n\n<b>Size: </b>{get_readable_file_size(self.size)}\n<b>Elapsed: </b>{get_readable_time(time() - self.time)}"
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
             msg += f"\n<b>Total Files: </b>{folders}"

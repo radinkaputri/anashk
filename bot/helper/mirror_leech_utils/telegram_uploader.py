@@ -398,7 +398,7 @@ class TgUploader:
                     thumb = await get_multiple_frames_thumbnail(
                         self._up_path,
                         self._listener.thumbnail_layout,
-                        self._listener.screen_shots,
+                        self._listener.screenShots,
                     )
                 if thumb is None:
                     thumb = await get_video_thumbnail(self._up_path, duration)

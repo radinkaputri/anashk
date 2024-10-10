@@ -1,5 +1,5 @@
 from bot import LOGGER
-from bot.helper.ext_utils.status_utils import get_readable_file_size, MirrorStatus
+from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time, MirrorStatus
 
 
 class QueueStatus:
@@ -8,6 +8,7 @@ class QueueStatus:
         self._size = self.listener.size
         self._gid = gid
         self._status = status
+        self.engine = "OS"
 
     def gid(self):
         return self._gid

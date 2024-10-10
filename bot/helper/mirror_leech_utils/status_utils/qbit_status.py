@@ -24,6 +24,7 @@ class QbittorrentStatus:
         self.queued = queued
         self.seeding = seeding
         self.listener = listener
+        self.engine = "Qbittorrent"
         self._info = None
 
     def update(self):

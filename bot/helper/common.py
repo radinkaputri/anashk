@@ -117,6 +117,7 @@ class TaskConfig:
         self.isTorrent = False
         self.suproc = None
         self.thumb = None
+        self.time = ""
         self.extensionFilter = []
         self.isSuperChat = self.message.chat.type.name in ["SUPERGROUP", "CHANNEL"]
 
@@ -338,10 +339,10 @@ class TaskConfig:
 
             self.thumbnail_layout = (
                 self.thumbnail_layout
-                or self.user_dict.get("thumb_layout", False)
+                or self.userDict.get("thumb_layout", False)
                 or (
                     config_dict["THUMBNAIL_LAYOUT"]
-                    if "thumb_layout" not in self.user_dict
+                    if "thumb_layout" not in self.userDict
                     else ""
                 )
             )

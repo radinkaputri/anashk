@@ -166,11 +166,14 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         tasks[start_position : STATUS_LIMIT + start_position], start=1
     ):
         tstatus = await sync_to_async(task.status) if status == "All" else status
-        if task.listener.isSuperChat:
-            msg += f"<b>{index + start_position}.<a href='{task.listener.message.link}'>{tstatus}</a>: </b>"
+        elapse = time() - task.listener.time
+        elapsed = "-" if elapse < 1 else get_readable_time(elapse)
+        user_tag = task.listener.tag.replace("@", "").replace("_", " ")
+        cancel_task = f"<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>"
+        if config_dict["DELETE_LINKS"] and int(config_dict["SAFE_MODE"]) > 0:
+            msg += f"<b>{index + start_position}.{tstatus}: </b><code>{escape(f'{task.name()}')}</code>" if elapse <= config_dict["SAFE_MODE"] else f"<b>{index + start_position}.{tstatus}: </b><code>Your request is being processed, please be patient.</code>"
         else:
-            msg += f"<b>{index + start_position}.{tstatus}: </b>"
-        msg += f"<code>{escape(f'{task.name()}')}</code>"
+            msg += f"<b>{index + start_position}.{tstatus}: <code>{escape(f'{task.name()}')}</code></b>"
         if tstatus not in [
             MirrorStatus.STATUS_SPLITTING,
             MirrorStatus.STATUS_SEEDING,
@@ -184,8 +187,10 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
                 else task.progress()
             )
             msg += f"\n{get_progress_bar_string(progress)} {progress}"
-            msg += f"\n<b>Processed:</b> {task.processed_bytes()} of {task.size()}"
-            msg += f"\n<b>Speed:</b> {task.speed()} | <b>ETA:</b> {task.eta()}"
+            msg += f"\n<b>Done:</b> {task.processed_bytes()} of {task.size()}"
+            msg += f"\n<b>Speed:</b> {task.engine} {task.speed()}"
+            msg += f"\n<b>ETA:</b> {task.eta()} | <b>Elapsed:</b> {elapsed}"
+            msg += f"\n<b>User:</b> {user_tag} | <b>ID:</b> <code>{task.listener.message.from_user.id}</code>"
             if hasattr(task, "seeders_num"):
                 try:
                     msg += f"\n<b>Seeders:</b> {task.seeders_num()} | <b>Leechers:</b> {task.leechers_num()}"
@@ -199,8 +204,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg += f" | <b>Time: </b>{task.seeding_time()}"
         else:
             msg += f"\n<b>Size: </b>{task.size()}"
-        msg += f"\n<b>GID: </b><code>{task.gid()}</code>"
-        msg += f"\n<b>/{BotCommands.CancelTaskCommand}_{task.gid()}</b>\n\n"
+        msg += f"\n<blockquote>{cancel_task}</blockquote>\n\n"
 
     if len(msg) == 0:
         if status == "All":

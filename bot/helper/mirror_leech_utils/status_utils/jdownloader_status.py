@@ -63,6 +63,7 @@ async def get_download(gid, old_info):
 class JDownloaderStatus:
     def __init__(self, listener, gid):
         self.listener = listener
+        self.engine = "Jdl"
         self._gid = gid
         self._info = {}
 

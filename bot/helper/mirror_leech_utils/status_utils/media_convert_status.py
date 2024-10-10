@@ -1,10 +1,11 @@
 from bot import LOGGER
-from bot.helper.ext_utils.status_utils import get_readable_file_size, MirrorStatus
+from bot.helper.ext_utils.status_utils import get_readable_file_size, get_readable_time, MirrorStatus
 
 
 class MediaConvertStatus:
     def __init__(self, listener, gid):
         self.listener = listener
+        self.engine = "FFmpeg"
         self._gid = gid
         self._size = self.listener.size
 

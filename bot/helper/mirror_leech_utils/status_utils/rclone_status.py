@@ -1,4 +1,4 @@
-from bot.helper.ext_utils.status_utils import MirrorStatus
+from bot.helper.ext_utils.status_utils import MirrorStatus, get_readable_time
 
 
 class RcloneStatus:
@@ -7,6 +7,7 @@ class RcloneStatus:
         self._gid = gid
         self._status = status
         self.listener = listener
+        self.engine = "Rclone"
 
     def gid(self):
         return self._gid

@@ -10,6 +10,7 @@ from bot.helper.ext_utils.bot_utils import (
     sync_to_async,
     new_task,
     cmd_exec,
+    delete_links,
     arg_parser,
     COMMAND_USAGE,
 )
@@ -67,6 +68,8 @@ class Clone(TaskListener):
     async def newEvent(self):
         text = self.message.text.split("\n")
         input_list = text[0].split(" ")
+        
+        await delete_links(self.message)
 
         args = {
             "link": "",

@@ -8,6 +8,7 @@ from bot.helper.ext_utils.status_utils import (
 class GdriveStatus:
     def __init__(self, listener, obj, gid, status):
         self.listener = listener
+        self.engine = "G-Api"
         self._obj = obj
         self._size = self.listener.size
         self._gid = gid

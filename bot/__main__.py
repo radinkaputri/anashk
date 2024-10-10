@@ -60,7 +60,7 @@ from .modules import (
     force_start,
 )
 
-
+bot_uptime = get_readable_time(time() - botStartTime)
 async def stats(_, message):
     if await aiopath.exists(".git"):
         last_commit = await cmd_exec(
@@ -74,7 +74,7 @@ async def stats(_, message):
     memory = virtual_memory()
     stats = (
         f"<b>Commit Date:</b> {last_commit}\n\n"
-        f"<b>Bot Uptime:</b> {get_readable_time(time() - botStartTime)}\n"
+        f"<b>Bot Uptime:</b> {bot_uptime}\n"
         f"<b>OS Uptime:</b> {get_readable_time(time() - boot_time())}\n\n"
         f"<b>Total Disk Space:</b> {get_readable_file_size(total)}\n"
         f"<b>Used:</b> {get_readable_file_size(used)} | <b>Free:</b> {get_readable_file_size(free)}\n\n"
@@ -96,7 +96,7 @@ async def stats(_, message):
 async def start(client, message):
     buttons = ButtonMaker()
     buttons.ubutton("Repo", "https://www.github.com/anasty17/mirror-leech-telegram-bot")
-    buttons.ubutton("Owner", "https://t.me/anas_tayyar")
+    buttons.ubutton("Owner", "https://t.me/u_xzyp")
     reply_markup = buttons.build_menu(2)
     if await CustomFilters.authorized(client, message):
         start_string = f"""
@@ -149,7 +149,8 @@ async def log(_, message):
 
 
 help_string = f"""
-NOTE: Try each command without any argument to see more detalis.
+<b>List available command</b>
+Try each command without any argument to see more detalis.<blockquote expandable>
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
 /{BotCommands.QbMirrorCommand[0]} or /{BotCommands.QbMirrorCommand[1]}: Start Mirroring to Google Drive using qBittorrent.
 /{BotCommands.JdMirrorCommand[0]} or /{BotCommands.JdMirrorCommand[1]}: Start Mirroring to Google Drive using JDownloader.
@@ -183,7 +184,8 @@ NOTE: Try each command without any argument to see more detalis.
 /{BotCommands.AExecCommand}: Exec async functions (Only Owner).
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
-/{BotCommands.RssCommand}: RSS Menu.
+/{BotCommands.RssCommand}: RSS Menu.</blockquote>
+<b>Powered by <a href="https://t.me/xyradelw">xyradinka</a></b>
 """
 
 
