@@ -16,7 +16,7 @@ async def convert_video(listener, video_file, ext, retry=False):
     output = f"{base_name}.{ext}"
     if retry:
         cmd = [
-            "ffmpeg",
+            "xtra",
             "-i",
             video_file,
             "-c:v",

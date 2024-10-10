@@ -7,7 +7,7 @@ from bot.helper.mirror_leech_utils.gdrive_utils.search import gdSearch
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import sendMessage, editMessage
+from bot.helper.telegram_helper.message_utils import sendMessage, editMessage, auto_delete_message
 
 
 async def list_buttons(user_id, isRecursive=True, user_token=False):
@@ -51,8 +51,10 @@ async def _list_drive(key, message, item_type, isRecursive, user_token, user_id)
             return
         msg = f"<b>Found {contents_no} result for <i>{key}</i></b>"
         await editMessage(message, msg, button)
+        await auto_delete_message(message)
     else:
         await editMessage(message, f"No result found for <i>{key}</i>")
+        await auto_delete_message(message)
 
 
 @new_task

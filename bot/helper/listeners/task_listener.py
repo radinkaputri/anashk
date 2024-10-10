@@ -254,30 +254,33 @@ class TaskListener(TaskConfig):
             and DATABASE_URL
         ):
             await DbManager().rm_complete_task(self.message.link)
-        msg = f"<b>Name: </b><code>{escape(self.name)}</code>\n\n<b>Size: </b>{get_readable_file_size(self.size)}\n<b>Elapsed: </b>{get_readable_time(time() - self.time)}"
+        msg = f"<b>Name: </b><code>{escape(self.name)}</code>\n\n<blockquote><b>┎Size: </b>{get_readable_file_size(self.size)}\n┠<b>Elapsed: </b>{get_readable_time(time() - self.time)}"
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
-            msg += f"\n<b>Total Files: </b>{folders}"
+            msg += f"\n┠<b>Total Files: </b>{folders}"
             if mime_type != 0:
-                msg += f"\n<b>Corrupted Files: </b>{mime_type}"
-            msg += f"\n<b>cc: </b>{self.tag}\n\n"
+                msg += f"\n┠<b>Corrupted Files: </b>{mime_type}"
+            msg += f"\n┠<b>Task: </b>#Leech"
+            msg += f"\n┖<b>cc: </b>{self.tag}</blockquote>\n\n"
             if not files:
-                await sendMessage(self.message, msg)
+              msg += f"<b>Sent to private message</b>"
+              await sendMessage(self.message, msg)
             else:
                 fmsg = ""
                 for index, (link, name) in enumerate(files.items(), start=1):
                     fmsg += f"{index}. <a href='{link}'>{name}</a>\n"
                     if len(fmsg.encode() + msg.encode()) > 4000:
+                        fmsg += ""
                         await sendMessage(self.message, msg + fmsg)
                         await sleep(1)
                         fmsg = ""
                 if fmsg != "":
                     await sendMessage(self.message, msg + fmsg)
         else:
-            msg += f"\n<b>Type: </b>{mime_type}"
+            msg += f"\n┠<b>Type: </b>{mime_type}"
             if mime_type == "Folder":
-                msg += f"\n<b>SubFolders: </b>{folders}"
-                msg += f"\n<b>Files: </b>{files}"
+                msg += f"\n┠<b>SubFolders: </b>{folders}"
+                msg += f"\n┠<b>Files: </b>{files}"
             if (
                 link
                 or rclonePath
@@ -288,7 +291,7 @@ class TaskListener(TaskConfig):
                 if link:
                     buttons.ubutton("☁️ Cloud Link", link)
                 else:
-                    msg += f"\n\nPath: <code>{rclonePath}</code>"
+                    msg += f"\n<b>Path: </b><code>{rclonePath}</code>"
                 if (
                     rclonePath
                     and (RCLONE_SERVE_URL := config_dict["RCLONE_SERVE_URL"])
@@ -314,9 +317,11 @@ class TaskListener(TaskConfig):
                             buttons.ubutton("🌐 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\nPath: <code>{rclonePath}</code>"
+                msg += f"\n┠<b>Path: </b><code>{rclonePath}</code>"
                 button = None
-            msg += f"\n<b>cc: </b>{self.tag}"
+            msg += f"\n┠<b>Task: </b>#Mirror"
+            msg += f"\n┖<b>cc: </b>{self.tag}</blockquote>\n"
+            msg += f"\n<b>Sent to cloud storage</b>"
             await sendMessage(self.message, msg, button)
         if self.seed:
             if self.newDir:

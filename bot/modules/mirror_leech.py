@@ -11,6 +11,7 @@ from bot.helper.ext_utils.bot_utils import (
     sync_to_async,
     arg_parser,
     delete_links,
+    send_react,
     COMMAND_USAGE,
 )
 from bot.helper.ext_utils.exceptions import DirectDownloadLinkException
@@ -79,6 +80,7 @@ class Mirror(TaskListener):
 
     @new_task
     async def newEvent(self):
+        await send_react(self.message)
         text = self.message.text.split("\n")
         input_list = text[0].split(" ")
 
