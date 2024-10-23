@@ -400,14 +400,3 @@ bot.add_handler(
         qb_leech, filters=command(BotCommands.QbLeechCommand) & CustomFilters.authorized
     )
 )
-bot.add_handler(
-    MessageHandler(
-        jd_mirror,
-        filters=command(BotCommands.JdMirrorCommand) & CustomFilters.authorized,
-    )
-)
-bot.add_handler(
-    MessageHandler(
-        jd_leech, filters=command(BotCommands.JdLeechCommand) & CustomFilters.authorized
-    )
-)

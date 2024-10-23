@@ -1,7 +1,8 @@
 from pyrogram.filters import command, regex
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from time import time
-import random
+from datetime import datetime, timedelta
+import asyncio
 
 from psutil import (
     boot_time,
@@ -42,6 +43,8 @@ from bot.helper.telegram_helper.message_utils import (
 )
 from bot.helper.telegram_helper.button_build import ButtonMaker
 
+user_cache = {}
+lock = asyncio.Lock()
 
 @new_task
 async def mirror_status(_, message):
@@ -75,6 +78,15 @@ async def mirror_status(_, message):
 async def status_pages(_, query):
     data = query.data.split()
     key = int(data[1])
+    user_id = query.from_user.id
+
+    async with lock:
+        if user_id in user_cache and datetime.now() < user_cache[user_id] + timedelta(seconds=5):
+          await query.answer("Yang nyepam anak yatim.", show_alert=True)
+          return
+
+        user_cache[user_id] = datetime.now()
+
     if data[2] == "ref":
         await query.answer()
         await update_status_message(key, force=True)
