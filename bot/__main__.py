@@ -20,6 +20,7 @@ from time import time
 
 from bot import (
     bot,
+    bot_name,
     botStartTime,
     LOGGER,
     Intervals,
@@ -59,6 +60,7 @@ from .modules import (
     ytdlp,
     rss,
     shell,
+    speedtest,
     users_settings,
     bot_settings,
     help,
@@ -159,18 +161,16 @@ async def log(_, message):
 
 
 help_string = f"""
-<b>List available command</b>
+<b>List available command of {bot_name}</b>
 Try each command without any argument to see more detalis.<blockquote expandable>
-<b>Mirror</b>
+<b>Mirror command</b>
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
 /{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
 /{BotCommands.QbMirrorCommand[0]} or /{BotCommands.QbMirrorCommand[1]}: Start Mirroring to Google Drive using qBittorrent.
-/{BotCommands.JdMirrorCommand[0]} or /{BotCommands.JdMirrorCommand[1]}: Start Mirroring to Google Drive using JDownloader.
 
-<b>Leech</b>
+<b>Leech command</b>
 /{BotCommands.LeechCommand[0]} or /{BotCommands.LeechCommand[1]}: Start leeching to Telegram.
 /{BotCommands.QbLeechCommand[0]} or /{BotCommands.QbLeechCommand[1]}: Start leeching using qBittorrent.
-/{BotCommands.JdLeechCommand[0]} or /{BotCommands.JdLeechCommand[1]}: Start leeching using JDownloader.
 /{BotCommands.YtdlLeechCommand[0]} or /{BotCommands.YtdlLeechCommand[1]}: Leech yt-dlp supported link.
 
 <b>Google Drive & Torrent</b>
@@ -179,11 +179,11 @@ Try each command without any argument to see more detalis.<blockquote expandable
 /{BotCommands.DeleteCommand} [drive_url]: Delete file/folder from Google Drive (Only Owner & Sudo).
 /{BotCommands.ListCommand} [query]: Search in Google Drive(s).
 /{BotCommands.SearchCommand} [query]: Search for torrents with API.
+/{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
 
-<b>Bot Utility</b>
+<b>Bot & task Utility</b>
 /{BotCommands.UserSetCommand[0]} or /{BotCommands.UserSetCommand[1]} [query]: Users settings.
 /{BotCommands.BotSetCommand[0]} or /{BotCommands.BotSetCommand[1]} [query]: Bot settings.
-/{BotCommands.BtSelectCommand}: Select files from torrents by gid or reply.
 /{BotCommands.CancelTaskCommand} [gid]: Cancel task by gid or reply.
 /{BotCommands.ForceStartCommand[0]} or /{BotCommands.ForceStartCommand[1]} [gid]: Force start task by gid or reply.
 /{BotCommands.CancelAllCommand} [query]: Cancel all [status] tasks.
@@ -238,9 +238,9 @@ async def restart_notification():
     if INCOMPLETE_TASK_NOTIFIER and DATABASE_URL:
         if notifier_dict := await DbManager().get_incomplete_tasks():
             for cid, data in notifier_dict.items():
-                msg = "Restarted Successfully!" if cid == chat_id else "Bot Restarted!\nDue to Overloading Task!!"
+                msg = "Restarted Successfully!" if cid == chat_id else "<b>Bot Restarted!\n\nIncomplete task user</b>"
                 for tag, links in data.items():
-                    msg += f"\n\nTask {tag}"
+                    msg += f"\n{tag}"
                     for index, link in enumerate(links, start=1):
                         msg += f"\n{index}. {link}\n"
                         if len(msg.encode()) > 4000:

@@ -4,9 +4,11 @@ from functools import partial
 from html import escape
 from io import BytesIO
 from os import getcwd
+from os import path as ospath
 from pyrogram.filters import command, regex, create
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from time import time
+from PIL import Image
 
 from bot import (
     bot,
@@ -180,8 +182,9 @@ async def get_user_settings(from_user):
 
     buttons.ibutton("Close", f"userset {user_id} close")
 
-    text = f"""<u>Settings for {name}</u>
-Leech Type is <b>{ltype}</b>
+    text = f"""<u><i><b>Settings for {name}</u></u></b>
+
+<blockquote>Leech Type is <b>{ltype}</b>
 Custom Thumbnail <b>{thumbmsg}</b>
 Leech Split Size is <b>{split_size}</b>
 Equal Splits is <b>{equal_splits}</b>
@@ -201,22 +204,30 @@ Stop Duplicate is <b>{sd_msg}</b>
 Default Upload is <b>{du}</b>
 Name substitution is <b>{ns_msg}</b>
 Excluded Extensions is <code>{ex_ex}</code>
-YT-DLP Options is <b><code>{escape(ytopt)}</code></b>"""
+YT-DLP Options is <b><code>{escape(ytopt)}</code></b></blockquote>"""
 
     return text, buttons.build_menu(1)
 
 
 async def update_user_settings(query):
     msg, button = await get_user_settings(query.from_user)
-    await editMessage(query.message, msg, button)
+    user_id = query.from_user.id
+    thumbnail = f"Thumbnails/{user_id}.jpg"
+    if not ospath.exists(thumbnail):
+        thumbnail = "https://i.pinimg.com/736x/99/5d/66/995d6652f37f3233d70ffa0344028196.jpg"
+    await editMessage(query.message, msg, button, thumbnail)
 
 
 @new_thread
 async def user_settings(_, message):
     from_user = message.from_user
     handler_dict[from_user.id] = False
+    user_id = message.from_user.id
+    thumbnail = f"Thumbnails/{user_id}.jpg"
+    if not ospath.exists(thumbnail):
+        thumbnail = "https://i.pinimg.com/736x/99/5d/66/995d6652f37f3233d70ffa0344028196.jpg"
     msg, button = await get_user_settings(from_user)
-    umsg = await sendMessage(message, msg, button)
+    umsg = await sendMessage(message, msg, button, thumbnail)
     await five_minute_del(message)
     await deleteMessage(umsg)
 

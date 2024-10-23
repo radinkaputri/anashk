@@ -6,11 +6,9 @@ class _BotCommands:
         self.StartCommand = f"start{CMD_SUFFIX}"
         self.MirrorCommand = [f"mirror{CMD_SUFFIX}", f"m{CMD_SUFFIX}"]
         self.QbMirrorCommand = [f"qbmirror{CMD_SUFFIX}", f"qm{CMD_SUFFIX}"]
-        self.JdMirrorCommand = [f"jdmirror{CMD_SUFFIX}", f"jm{CMD_SUFFIX}"]
         self.YtdlCommand = [f"ytdl{CMD_SUFFIX}", f"ym{CMD_SUFFIX}"]
         self.LeechCommand = [f"leech{CMD_SUFFIX}", f"l{CMD_SUFFIX}"]
         self.QbLeechCommand = [f"qbleech{CMD_SUFFIX}", f"ql{CMD_SUFFIX}"]
-        self.JdLeechCommand = [f"jdleech{CMD_SUFFIX}", f"jl{CMD_SUFFIX}"]
         self.YtdlLeechCommand = [f"ytdlleech{CMD_SUFFIX}", f"yl{CMD_SUFFIX}"]
         self.CloneCommand = f"clone{CMD_SUFFIX}"
         self.CountCommand = f"count{CMD_SUFFIX}"
@@ -39,6 +37,7 @@ class _BotCommands:
         self.UserSetCommand = [f"usetting{CMD_SUFFIX}", f"us{CMD_SUFFIX}"]
         self.BtSelectCommand = f"btsel{CMD_SUFFIX}"
         self.RssCommand = f"rss{CMD_SUFFIX}"
+        self.SpeedCommand = f"speedtest{CMD_SUFFIX}"
 
 
 BotCommands = _BotCommands()

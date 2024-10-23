@@ -123,6 +123,7 @@ async def set_commands(bot):
             BotCommand(BotCommands.PingCommand, "Ping the bot"),
             BotCommand(BotCommands.HelpCommand, "Get help"),
             BotCommand(BotCommands.UserSetCommand[0], "Open user setting menu (or " + BotCommands.UserSetCommand[1] + ")"),
+            BotCommand(BotCommands.SpeedCommand, "Speedtest"),
             BotCommand(BotCommands.RestartCommand, "Restart the bot (only owner)"),
         ])
 
