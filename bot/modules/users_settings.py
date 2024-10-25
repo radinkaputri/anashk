@@ -130,7 +130,7 @@ async def get_user_settings(from_user):
     else:
         rccpath = "None"
 
-    buttons.ibutton("Gdrive Tools", f"userset {user_id} gdrive")
+    buttons.ibutton("Gdrive", f"userset {user_id} gdrive")
     tokenmsg = "Exists" if await aiopath.exists(token_pickle) else "Not Exists"
     if user_dict.get("gdrive_id", False):
         gdrive_id = user_dict["gdrive_id"]
@@ -154,11 +154,11 @@ async def get_user_settings(from_user):
     default_upload = (
         user_dict.get("default_upload", "") or config_dict["DEFAULT_UPLOAD"]
     )
-    du = "Gdrive API" if default_upload == "gd" else "Rclone"
-    dub = "Gdrive API" if default_upload != "gd" else "Rclone"
-    buttons.ibutton(f"Upload using {dub}", f"userset {user_id} {default_upload}")
+    du = "GdriveAPI" if default_upload == "gd" else "Rclone"
+    dub = "GdriveAPI" if default_upload != "gd" else "Rclone"
+    buttons.ibutton(f"{dub} Upload", f"userset {user_id} {default_upload}")
 
-    buttons.ibutton("Excluded Extensions", f"userset {user_id} ex_ex")
+    buttons.ibutton("Exclude Ext", f"userset {user_id} ex_ex")
     if user_dict.get("excluded_extensions", False):
         ex_ex = user_dict["excluded_extensions"]
     elif "excluded_extensions" not in user_dict and GLOBAL_EXTENSION_FILTER:
@@ -180,9 +180,9 @@ async def get_user_settings(from_user):
     if user_dict:
         buttons.ibutton("Reset All", f"userset {user_id} reset")
 
-    buttons.ibutton("Close", f"userset {user_id} close")
+    buttons.ibutton("Close", f"userset {user_id} close", position="footer")
 
-    text = f"""<u><i><b>Settings for {name}</u></u></b>
+    text = f"""<u><i><b>Settings for {name}</u></i></b>
 
 <blockquote>Leech Type is <b>{ltype}</b>
 Custom Thumbnail <b>{thumbmsg}</b>
@@ -206,7 +206,7 @@ Name substitution is <b>{ns_msg}</b>
 Excluded Extensions is <code>{ex_ex}</code>
 YT-DLP Options is <b><code>{escape(ytopt)}</code></b></blockquote>"""
 
-    return text, buttons.build_menu(1)
+    return text, buttons.build_menu(2)
 
 
 async def update_user_settings(query):
@@ -521,9 +521,10 @@ async def edit_user_settings(client, query):
             thumb_layout = "None"
 
         buttons.ibutton("Back", f"userset {user_id} back")
-        buttons.ibutton("Close", f"userset {user_id} close")
-        text = f"""<u>Leech Settings for {name}</u>
-Leech Type is <b>{ltype}</b>
+        buttons.ibutton("Close", f"userset {user_id} close", position="footer")
+        text = f"""<u><b><i>Leech Settings for {name}</i></b></u>
+
+<blockquote>Leech Type is <b>{ltype}</b>
 Custom Thumbnail <b>{thumbmsg}</b>
 Leech Split Size is <b>{split_size}</b>
 Equal Splits is <b>{equal_splits}</b>
@@ -532,7 +533,7 @@ Leech Prefix is <code>{escape(lprefix)}</code>
 Leech Destination is <code>{leech_dest}</code>
 Leech by <b>{leech_method}</b> session
 Mixed Leech is <b>{mixed_leech}</b>
-Thumbnail Layout is <b>{thumb_layout}</b>
+Thumbnail Layout is <b>{thumb_layout}</b></blockquote>
 """
         await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "rclone":
@@ -541,7 +542,7 @@ Thumbnail Layout is <b>{thumb_layout}</b>
         buttons.ibutton("Rclone Config", f"userset {user_id} rcc")
         buttons.ibutton("Default Rclone Path", f"userset {user_id} rcp")
         buttons.ibutton("Back", f"userset {user_id} back")
-        buttons.ibutton("Close", f"userset {user_id} close")
+        buttons.ibutton("Close", f"userset {user_id} close", position="footer")
         rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
         if user_dict.get("rclone_path", False):
             rccpath = user_dict["rclone_path"]
@@ -549,15 +550,16 @@ Thumbnail Layout is <b>{thumb_layout}</b>
             rccpath = RP
         else:
             rccpath = "None"
-        text = f"""<u>Rclone Settings for {name}</u>
-Rclone Config <b>{rccmsg}</b>
-Rclone Path is <code>{rccpath}</code>"""
-        await editMessage(message, text, buttons.build_menu(1))
+        text = f"""<b><i><u>Rclone Settings for {name}</u></i></b>
+
+<blockquote>Rclone Config <b>{rccmsg}</b>
+Rclone Path is <code>{rccpath}</code></blockquote>"""
+        await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "gdrive":
         await query.answer()
         buttons = ButtonMaker()
         buttons.ibutton("token.pickle", f"userset {user_id} token")
-        buttons.ibutton("Default Gdrive ID", f"userset {user_id} gdid")
+        buttons.ibutton("Gdrive ID", f"userset {user_id} gdid")
         buttons.ibutton("Index URL", f"userset {user_id} index")
         if (
             user_dict.get("stop_duplicate", False)
@@ -565,16 +567,16 @@ Rclone Path is <code>{rccpath}</code>"""
             and config_dict["STOP_DUPLICATE"]
         ):
             buttons.ibutton(
-                "Disable Stop Duplicate", f"userset {user_id} stop_duplicate false"
+                "Allow Duplicate", f"userset {user_id} stop_duplicate false"
             )
             sd_msg = "Enabled"
         else:
             buttons.ibutton(
-                "Enable Stop Duplicate", f"userset {user_id} stop_duplicate true"
+                "Stop Duplicate", f"userset {user_id} stop_duplicate true"
             )
             sd_msg = "Disabled"
         buttons.ibutton("Back", f"userset {user_id} back")
-        buttons.ibutton("Close", f"userset {user_id} close")
+        buttons.ibutton("Close", f"userset {user_id} close", position="footer")
         tokenmsg = "Exists" if await aiopath.exists(token_pickle) else "Not Exists"
         if user_dict.get("gdrive_id", False):
             gdrive_id = user_dict["gdrive_id"]
@@ -583,12 +585,13 @@ Rclone Path is <code>{rccpath}</code>"""
         else:
             gdrive_id = "None"
         index = user_dict["index_url"] if user_dict.get("index_url", False) else "None"
-        text = f"""<u>Gdrive Tools Settings for {name}</u>
-Gdrive Token <b>{tokenmsg}</b>
+        text = f"""<u><b><i>Gdrive Settings for {name}</i></b></u>
+
+<blockquote>Gdrive Token <b>{tokenmsg}</b>
 Gdrive ID is <code>{gdrive_id}</code>
 Index URL is <code>{index}</code>
-Stop Duplicate is <b>{sd_msg}</b>"""
-        await editMessage(message, text, buttons.build_menu(1))
+Stop Duplicate is <b>{sd_msg}</b></blockquote>"""
+        await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "vthumb":
         await query.answer()
         await sendFile(message, thumb_path, name)
@@ -741,12 +744,12 @@ Check all yt-dlp api options from this <a href='https://github.com/yt-dlp/yt-dlp
             or "thumb_layout" not in user_dict
             and config_dict["THUMBNAIL_LAYOUT"]
         ):
-            buttons.data_button(
+            buttons.ibutton(
                 "Reset Thumbnail Layout", f"userset {user_id} thumb_layout"
             )
-        buttons.data_button("Back", f"userset {user_id} leech")
-        buttons.data_button("Close", f"userset {user_id} close")
-        await edit_message(
+        buttons.ibutton("Back", f"userset {user_id} leech")
+        buttons.ibutton("Close", f"userset {user_id} close")
+        await editMessage(
             message,
             "Send thumbnail layout (widthxheight, 2x2, 3x3, 2x4, 4x4, ...). Timeout: 60 sec",
             buttons.build_menu(1),

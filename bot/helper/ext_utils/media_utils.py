@@ -410,7 +410,7 @@ async def split_file(
     parts = -(-size // listener.splitSize)
     if listener.equalSplits and not inLoop:
         split_size = (size // parts) + (size % parts)
-    if not listener.asDoc and (await get_document_type(path))[0]:
+    if not listener.as_doc and (await get_document_type(path))[0]:
         if multi_streams:
             multi_streams = await is_multi_streams(path)
         duration = (await get_media_info(path))[0]

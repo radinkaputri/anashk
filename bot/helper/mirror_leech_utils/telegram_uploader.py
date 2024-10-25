@@ -372,7 +372,7 @@ class TgUploader:
                     thumb = await get_audio_thumbnail(self._up_path)
 
             if (
-                self._listener.asDoc
+                self._listener.as_doc
                 or force_document
                 or (not is_video and not is_audio and not is_image)
             ):
