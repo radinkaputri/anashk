@@ -163,7 +163,7 @@ async def log(_, message):
 
 
 help_string = f"""
-<b>List available command of {bot_name}</b>
+<b>List of available command</b>
 Try each command without any argument to see more detalis.<blockquote expandable>
 <b>Mirror command</b>
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
@@ -204,7 +204,7 @@ Try each command without any argument to see more detalis.<blockquote expandable
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
 /{BotCommands.RssCommand}: RSS Menu.</blockquote>
-<b>Powered by <a href="https://t.me/xyradelw">xyradinka</a></b>
+<b>{bot_name} powered by <a href="https://t.me/xyradelw">xyradinka</a></b>
 """
 
 
@@ -282,7 +282,7 @@ async def main():
     )
     bot.add_handler(
         MessageHandler(
-            restart, filters=command(BotCommands.RestartCommand) & CustomFilters.sudo
+            restart, filters=command(BotCommands.RestartCommand) & CustomFilters.owner
         )
     )
     bot.add_handler(
