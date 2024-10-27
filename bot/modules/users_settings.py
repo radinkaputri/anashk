@@ -214,7 +214,7 @@ async def update_user_settings(query):
     user_id = query.from_user.id
     thumbnail = f"Thumbnails/{user_id}.jpg"
     if not ospath.exists(thumbnail):
-        thumbnail = "https://i.pinimg.com/736x/99/5d/66/995d6652f37f3233d70ffa0344028196.jpg"
+        thumbnail = "https://i.pinimg.com/736x/9c/5e/d1/9c5ed1270ee16ad6e31bd55dc836b2a0.jpg"
     await editMessage(query.message, msg, button, thumbnail)
 
 
@@ -225,7 +225,7 @@ async def user_settings(_, message):
     user_id = message.from_user.id
     thumbnail = f"Thumbnails/{user_id}.jpg"
     if not ospath.exists(thumbnail):
-        thumbnail = "https://i.pinimg.com/736x/99/5d/66/995d6652f37f3233d70ffa0344028196.jpg"
+        thumbnail = "https://i.pinimg.com/736x/9c/5e/d1/9c5ed1270ee16ad6e31bd55dc836b2a0.jpg"
     msg, button = await get_user_settings(from_user)
     umsg = await sendMessage(message, msg, button, thumbnail)
     await five_minute_del(message)

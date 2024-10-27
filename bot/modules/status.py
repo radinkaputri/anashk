@@ -81,9 +81,11 @@ async def status_pages(_, query):
     user_id = query.from_user.id
 
     async with lock:
-        if user_id in user_cache and datetime.now() < user_cache[user_id] + timedelta(seconds=5):
-          await query.answer("Yang nyepam anak yatim.", show_alert=True)
-          return
+        if user_id in user_cache and datetime.now() < user_cache[user_id] + timedelta(seconds=7):
+            remaining_time = (user_cache[user_id] + timedelta(seconds=7)) - datetime.now()
+            seconds_left = int(remaining_time.total_seconds())
+            await query.answer(f"Don't spam! try again after {seconds_left} s", show_alert=True)
+            return
 
         user_cache[user_id] = datetime.now()
 
