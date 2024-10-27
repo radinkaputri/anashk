@@ -103,13 +103,13 @@ async def stats(_, message):
 
 async def start(client, message):
     buttons = ButtonMaker()
-    buttons.ubutton("owner", "tg://user?id=7011286069")
+    buttons.ubutton("maintainer", "tg://user?id=7011286069")
     
     is_authorized = await CustomFilters.authorized(client, message)
     status = "Auth" if is_authorized else "None"
 
     if not is_authorized:
-        buttons.ubutton("join", "https://t.me/zyradaexmirror")
+        buttons.ubutton("botgroups", "https://t.me/zyradaexmirror")
         
     reply_markup = buttons.build_menu(2)
 

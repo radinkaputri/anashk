@@ -1043,11 +1043,11 @@ async def load_config():
 
 bot.add_handler(
     MessageHandler(
-        bot_settings, filters=command(BotCommands.BotSetCommand) & CustomFilters.sudo
+        bot_settings, filters=command(BotCommands.BotSetCommand) & CustomFilters.owner
     )
 )
 bot.add_handler(
     CallbackQueryHandler(
-        edit_bot_settings, filters=regex("^botset") & CustomFilters.sudo
+        edit_bot_settings, filters=regex("^botset") & CustomFilters.owner
     )
 )
