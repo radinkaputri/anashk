@@ -47,11 +47,11 @@ async def delete_links(message):
     if config_dict['DELETE_LINKS']:
         try:
             if reply_to := message.reply_to_message:
-                await sleep(4)
+                await sleep(2)
                 await reply_to.delete()
                 await message.delete()
             else:
-                await sleep(4)
+                await sleep(2)
                 await message.delete()
         except Exception as e:
             LOGGER.error(str(e))

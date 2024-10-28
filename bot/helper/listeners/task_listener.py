@@ -255,7 +255,7 @@ class TaskListener(TaskConfig):
         ):
             await DbManager().rm_complete_task(self.message.link)
         msg = (
-          f"<b>Name: </b><code>{escape(self.name)}</code>"
+          f"<code>{escape(self.name)}</code>"
           f"\n<b>Size: </b>{get_readable_file_size(self.size)}"
           f"\n\n<blockquote><b>┎Elapsed: </b>{get_readable_time(time() - self.time)}"
           )

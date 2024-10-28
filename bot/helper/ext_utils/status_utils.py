@@ -175,11 +175,11 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
         safe_mode = int(config_dict["SAFE_MODE"])
         if safe_mode > 0:
           if elapse <= safe_mode:
-              msg += f"<b>Name:</b> <code>{escape(f'{task.name()}')}</code>\n"
+              msg += f"<code>{escape(f'{task.name()}')}</code>\n"
           else:
-              msg += f"<b>Name:</b> <code>Your request is being processed, please be patient.</code>\n"
+              msg += f"<code>Your request is being processed, please be patient.</code>\n"
         else:
-            msg += f"<b>Name:</b> <code>{escape(f'{task.name()}')}</code>\n"
+            msg += f"<code>{escape(f'{task.name()}')}</code>\n"
         if tstatus not in [
             MirrorStatus.STATUS_SEEDING,
             MirrorStatus.STATUS_SAMVID,
