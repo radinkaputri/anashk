@@ -134,6 +134,18 @@ async def delete_status():
             except Exception as e:
                 LOGGER.error(str(e))
 
+async def chat_info(channel_id):
+    if channel_id.startswith("-100"):
+        channel_id = int(channel_id)
+    elif channel_id.startswith("@"):
+        channel_id = channel_id.replace("@", "")
+    else:
+        return None
+    try:
+        return await bot.get_chat(channel_id)
+    except PeerIdInvalid as e:
+        LOGGER.error(f"{e.NAME}: {e.MESSAGE} for {channel_id}")
+        return None
 
 async def get_tg_link_message(link):
     message = None
