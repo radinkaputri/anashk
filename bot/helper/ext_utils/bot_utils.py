@@ -21,7 +21,7 @@ from bot.helper.ext_utils.telegraph_helper import telegraph
 from bot.helper.telegram_helper.button_build import ButtonMaker
 from bot.helper.telegram_helper.bot_commands import BotCommands
 
-THREADPOOL = ThreadPoolExecutor(max_workers=9999)
+THREADPOOL = ThreadPoolExecutor(max_workers=3000)
 
 COMMAND_USAGE = {}
 
