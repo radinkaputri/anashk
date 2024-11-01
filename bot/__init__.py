@@ -486,7 +486,7 @@ PORT = environ.get("PORT")
 Popen(f"gunicorn web.wserver:app --bind 0.0.0.0:{PORT} --worker-class gevent", shell=True)
 
 log_info("Starting qBittorrent-Nox")
-run(["xnox", "-d", "--profile=."])
+run(["xon-bit", "-d", "--profile=."])
 if not ospath.exists('.netrc'):
     with open('.netrc', 'w'):
        pass
@@ -498,7 +498,7 @@ with open("a2c.conf", "a+") as a:
     if TORRENT_TIMEOUT:
         a.write(f"bt-stop-timeout={TORRENT_TIMEOUT}\n")
     a.write(f"bt-tracker=[{trackers}]")
-run(["xria", "--conf-path=/usr/src/app/a2c.conf"])
+run(["zetra", "--conf-path=/usr/src/app/a2c.conf"])
 
 
 log_info("Creating client from BOT_TOKEN")

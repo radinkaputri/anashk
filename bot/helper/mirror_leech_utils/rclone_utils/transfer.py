@@ -198,7 +198,7 @@ class RcloneTransferHelper:
             destination = epath
 
         cmd = [
-            "xone",
+            "cross-suck",
             "lsjson",
             "--fast-list",
             "--no-mimetype",
@@ -345,7 +345,7 @@ class RcloneTransferHelper:
             else:
                 destination = f"{oremote}:{self._listener.name}"
 
-            cmd = ["xone", "link", "--config", oconfig_path, destination]
+            cmd = ["cross-suck", "link", "--config", oconfig_path, destination]
             res, err, code = await cmd_exec(cmd)
 
             if code == 0:
@@ -441,7 +441,7 @@ class RcloneTransferHelper:
             unwanted_files = []
         ext = "*.{" + ",".join(self._listener.extensionFilter) + "}"
         cmd = [
-            "xone",
+            "cross-suck",
             method,
             "--fast-list",
             "--config",

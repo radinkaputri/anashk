@@ -104,7 +104,7 @@ def exit_clean_up(signal, frame):
     try:
         LOGGER.info("Please wait, while we clean up and stop the running downloads")
         clean_all()
-        srun(["pkill", "-9", "-f", "gunicorn|xria|xnox|xtra|xone"])
+        srun(["pkill", "-9", "-f", "gunicorn|zetra|xon-bit|ggrof|cross-suck"])
         sexit(0)
     except KeyboardInterrupt:
         LOGGER.warning("Force Exiting before the cleanup finishes!")

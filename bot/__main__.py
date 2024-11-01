@@ -142,7 +142,7 @@ async def restart(_, message):
     await sync_to_async(clean_all)
     await sleep(1)
     proc1 = await create_subprocess_exec(
-        "pkill", "-9", "-f", "gunicorn|xria|xnox|xtra|xone"
+        "pkill", "-9", "-f", "zetra|xon-bit|ggrof|cross-suck"
     )
     proc2 = await create_subprocess_exec("python3", "update.py")
     await gather(proc1.wait(), proc2.wait())
