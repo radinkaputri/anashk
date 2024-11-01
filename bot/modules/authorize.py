@@ -1,7 +1,7 @@
 from pyrogram.filters import command
 from pyrogram.handlers import MessageHandler
 
-from bot import user_data, DATABASE_URL, bot
+from bot import user_data, config_dict, bot
 from bot.helper.ext_utils.bot_utils import update_user_ldata
 from bot.helper.ext_utils.db_handler import DbManager
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -41,7 +41,7 @@ async def authorize(client, message):
         if thread_id is not None:
             update_user_ldata(chat_id, "thread_ids", [thread_id])
         if config_dict["DATABASE_URL"]:
-            await database.update_user_data(chat_id)
+            await DbManager().update_user_data(chat_id)
         msg = "Authorized"
     await sendMessage(message, msg)
 
@@ -68,7 +68,7 @@ async def unauthorize(client, message):
         else:
             update_user_ldata(chat_id, "is_auth", False)
         if config_dict["DATABASE_URL"]:
-            await database.update_user_data(chat_id)
+            await DbManager().update_user_data(chat_id)
         msg = "Unauthorized"
     else:
         msg = "Already Unauthorized!"
