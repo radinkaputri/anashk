@@ -1,10 +1,10 @@
-FROM 5hojib/aeon:latest
+FROM mysterysd/wzmlx:heroku
 
 WORKDIR /usr/src/app
 RUN chmod 777 /usr/src/app
 
 COPY requirements.txt .
-RUN pip3 install --no-cache-dir --break-system-packages -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . .
 CMD ["bash", "start.sh"]
