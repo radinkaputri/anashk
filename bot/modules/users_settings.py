@@ -184,7 +184,7 @@ async def get_user_settings(from_user):
 
     text = f"""<u><i><b>Settings for {name}</u></i></b>
 
-<blockquote>Leech Type is <b>{ltype}</b>
+Leech Type is <b>{ltype}</b>
 Custom Thumbnail <b>{thumbmsg}</b>
 Leech Split Size is <b>{split_size}</b>
 Equal Splits is <b>{equal_splits}</b>
@@ -204,7 +204,7 @@ Stop Duplicate is <b>{sd_msg}</b>
 Default Upload is <b>{du}</b>
 Name substitution is <b>{ns_msg}</b>
 Excluded Extensions is <code>{ex_ex}</code>
-YT-DLP Options is <b><code>{escape(ytopt)}</code></b></blockquote>"""
+YT-DLP Options is <b><code>{escape(ytopt)}</code></b>"""
 
     return text, buttons.build_menu(2)
 
@@ -521,7 +521,7 @@ async def edit_user_settings(client, query):
         buttons.ibutton("Close", f"userset {user_id} close", position="footer")
         text = f"""<u><b><i>Leech Settings for {name}</i></b></u>
 
-<blockquote>Leech Type is <b>{ltype}</b>
+Leech Type is <b>{ltype}</b>
 Custom Thumbnail <b>{thumbmsg}</b>
 Leech Split Size is <b>{split_size}</b>
 Equal Splits is <b>{equal_splits}</b>
@@ -530,7 +530,7 @@ Leech Prefix is <code>{escape(lprefix)}</code>
 Leech Destination is <code>{leech_dest}</code>
 Leech by <b>{leech_method}</b> session
 Mixed Leech is <b>{mixed_leech}</b>
-Thumbnail Layout is <b>{thumb_layout}</b></blockquote>
+Thumbnail Layout is <b>{thumb_layout}</b>
 """
         await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "rclone":
@@ -549,8 +549,8 @@ Thumbnail Layout is <b>{thumb_layout}</b></blockquote>
             rccpath = "None"
         text = f"""<b><i><u>Rclone Settings for {name}</u></i></b>
 
-<blockquote>Rclone Config <b>{rccmsg}</b>
-Rclone Path is <code>{rccpath}</code></blockquote>"""
+Rclone Config <b>{rccmsg}</b>
+Rclone Path is <code>{rccpath}</code>"""
         await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "gdrive":
         await query.answer()
@@ -584,10 +584,10 @@ Rclone Path is <code>{rccpath}</code></blockquote>"""
         index = user_dict["index_url"] if user_dict.get("index_url", False) else "None"
         text = f"""<u><b><i>Gdrive Settings for {name}</i></b></u>
 
-<blockquote>Gdrive Token <b>{tokenmsg}</b>
+Gdrive Token <b>{tokenmsg}</b>
 Gdrive ID is <code>{gdrive_id}</code>
 Index URL is <code>{index}</code>
-Stop Duplicate is <b>{sd_msg}</b></blockquote>"""
+Stop Duplicate is <b>{sd_msg}</b>"""
         await editMessage(message, text, buttons.build_menu(2))
     elif data[2] == "vthumb":
         await query.answer()

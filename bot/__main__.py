@@ -203,7 +203,8 @@ help_string = f"""
 /{BotCommands.AExecCommand}: Exec async functions (Only Owner).
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
-/{BotCommands.RssCommand}: RSS Menu.</blockquote>
+/{BotCommands.RssCommand}: RSS Menu.
+
 <b>powered by <a href="https://t.me/xyradelw">xyradinka</a></b>
 """
 

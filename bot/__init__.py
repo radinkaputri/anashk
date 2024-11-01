@@ -1,5 +1,6 @@
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aria2p import API as ariaAPI, Client as ariaClient
+from inspect import signature
 from asyncio import Lock, new_event_loop, set_event_loop
 from dotenv import load_dotenv, dotenv_values
 from logging import (
@@ -16,7 +17,7 @@ from logging import (
 from os import remove, path as ospath, environ
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from pyrogram import Client as tgClient, enums
+from pyrogram import Client as tgClient, enums, utils as pyroutils
 from qbittorrentapi import Client as qbClient
 from socket import setdefaulttimeout
 from subprocess import Popen, run, check_output
@@ -31,9 +32,13 @@ from threading import Thread
 install()
 setdefaulttimeout(600)
 
+pyroutils.MIN_CHAT_ID = -999999999999
+pyroutils.MIN_CHANNEL_ID = -100999999999999
+
 getLogger("qbittorrentapi").setLevel(INFO)
 getLogger("requests").setLevel(INFO)
 getLogger("urllib3").setLevel(INFO)
+getLogger("pyrogram").setLevel(ERROR)
 getLogger("httpx").setLevel(ERROR)
 getLogger("pymongo").setLevel(ERROR)
 
@@ -210,26 +215,23 @@ if len(EXTENSION_FILTER) > 0:
         x = x.lstrip(".")
         GLOBAL_EXTENSION_FILTER.append(x.strip().lower())
 
-USER_SESSION_STRING = environ.get("USER_SESSION_STRING", "")
+def xytgClient(*args, **kwargs):
+    if 'max_concurrent_transmissions' in signature(tgClient.__init__).parameters:
+        kwargs['max_concurrent_transmissions'] = 1000
+    return tgClient(*args, **kwargs)
+
+IS_PREMIUM_USER = False
+user = ''
+USER_SESSION_STRING = environ.get('USER_SESSION_STRING', '')
 if len(USER_SESSION_STRING) != 0:
     log_info("Creating client from USER_SESSION_STRING")
     try:
-        user = tgClient(
-            "user",
-            TELEGRAM_API,
-            TELEGRAM_HASH,
-            session_string=USER_SESSION_STRING,
-            parse_mode=enums.ParseMode.HTML,
-            max_concurrent_transmissions=10,
-        ).start()
+        user = xytgClient('user', TELEGRAM_API, TELEGRAM_HASH, session_string=USER_SESSION_STRING,
+                        parse_mode=enums.ParseMode.HTML, no_updates=True).start()
         IS_PREMIUM_USER = user.me.is_premium
-    except:
-        log_error("Failed to create client from USER_SESSION_STRING")
-        IS_PREMIUM_USER = False
-        user = ""
-else:
-    IS_PREMIUM_USER = False
-    user = ""
+    except Exception as e:
+        log_error(f"Failed making client from USER_SESSION_STRING : {e}")
+        user = ''
 
 MEGA_EMAIL = environ.get("MEGA_EMAIL", "")
 MEGA_PASSWORD = environ.get("MEGA_PASSWORD", "")
@@ -504,7 +506,8 @@ run(["zetra", "--conf-path=/usr/src/app/a2c.conf"])
 
 
 log_info("Creating client from BOT_TOKEN")
-bot = tgClient('bot', TELEGRAM_API, TELEGRAM_HASH, bot_token = BOT_TOKEN, workers = 1000, parse_mode = enums.ParseMode.HTML).start()
+bot = xytgClient('bot', TELEGRAM_API, TELEGRAM_HASH, bot_token=BOT_TOKEN, workers=1000,
+               parse_mode=enums.ParseMode.HTML).start()
 
 bot_name = bot.me.username
 

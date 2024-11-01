@@ -191,7 +191,7 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
                 if iscoroutinefunction(task.progress)
                 else task.progress()
             )
-            msg += f"\n<blockquote>┎{get_progress_bar_string(progress)}» <b><i>{progress}</b></i>"
+            msg += f"\n┎{get_progress_bar_string(progress)}» <b><i>{progress}</b></i>"
             msg += f"\n┠<b>Done:</b> {task.processed_bytes()} of {task.size()}"
             msg += f"\n┠<b>Status:</b> {tstatus} {task.speed()}"
             msg += f"\n┠<b>Engine:</b> {task.engine}"
@@ -209,10 +209,10 @@ async def get_readable_message(sid, is_user, page_no=1, status="All", page_step=
             msg += f"\n┠<b>Ratio: </b>{task.ratio()}"
             msg += f" | <b>Time: </b>{task.seeding_time()}"
         else:
-            msg += f"\n<blockquote>┎<b>Size: </b>{task.size()}"
+            msg += f"\n┎<b>Size: </b>{task.size()}"
             msg += f"\n┠<b>Elapsed:</b> {elapsed}"
         msg += f"\n┠<b>By:</b> <code>{task.listener.message.from_user.mention(style='html')}</code>"
-        msg += f"\n┖{cancel_task}</blockquote>\n\n"
+        msg += f"\n┖{cancel_task}\n\n"
 
     if len(msg) == 0:
         if status == "All":
