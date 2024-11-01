@@ -163,8 +163,8 @@ async def log(_, message):
 
 
 help_string = f"""
-<b>List of available command</b>
-Try each command without any argument to see more detalis.<blockquote expandable>
+<b>Try each command without any argument to see more detalis.</b>
+
 <b>Mirror command</b>
 /{BotCommands.MirrorCommand[0]} or /{BotCommands.MirrorCommand[1]}: Start mirroring to Google Drive.
 /{BotCommands.YtdlCommand[0]} or /{BotCommands.YtdlCommand[1]}: Mirror yt-dlp supported link.
@@ -204,7 +204,7 @@ Try each command without any argument to see more detalis.<blockquote expandable
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
 /{BotCommands.RssCommand}: RSS Menu.</blockquote>
-<b>{bot_name} powered by <a href="https://t.me/xyradelw">xyradinka</a></b>
+<b>powered by <a href="https://t.me/xyradelw">xyradinka</a></b>
 """
 
 

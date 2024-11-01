@@ -257,15 +257,14 @@ class TaskListener(TaskConfig):
         msg = (
           f"<code>{escape(self.name)}</code>"
           f"\n<b>Size: </b>{get_readable_file_size(self.size)}"
-          f"\n\n<blockquote><b>┎Elapsed: </b>{get_readable_time(time() - self.time)}"
+          f"\n\n<blockquote><b>Elapsed: </b>{get_readable_time(time() - self.time)}"
           )
         LOGGER.info(f"Task Done: {self.name}")
         if self.isLeech:
-            msg += f"\n┠<b>Total Files: </b>{folders}"
+            msg += f"\n<b>Total Files: </b>{folders}"
             if mime_type != 0:
-                msg += f"\n┠<b>Corrupted Files: </b>{mime_type}"
-            msg += f"\n┠<b>Task: </b>#Leech"
-            msg += f"\n┖<b>By: </b>{self.tag}</blockquote>\n\n"
+                msg += f"\n<b>Corrupted Files: </b>{mime_type}"
+            msg += f"\n<b>By: </b>{self.tag}</blockquote>\n\n"
             if not files:
               msg += f"<b>Sent to private message</b>"
               await sendMessage(self.message, msg)
@@ -281,10 +280,10 @@ class TaskListener(TaskConfig):
                 if fmsg != "":
                     await sendMessage(self.message, msg + fmsg)
         else:
-            msg += f"\n┠<b>Type: </b>{mime_type}"
+            msg += f"\n<b>Type: </b>{mime_type}"
             if mime_type == "Folder":
-                msg += f"\n┠<b>SubFolders: </b>{folders}"
-                msg += f"\n┠<b>Files: </b>{files}"
+                msg += f"\n<b>SubFolders: </b>{folders}"
+                msg += f"\n<b>Files: </b>{files}"
             if (
                 link
                 or rclonePath
@@ -321,10 +320,9 @@ class TaskListener(TaskConfig):
                             buttons.ubutton("🌐 View Link", share_urls)
                 button = buttons.build_menu(2)
             else:
-                msg += f"\n┠<b>Path: </b><code>{rclonePath}</code>"
+                msg += f"\n<b>Path: </b><code>{rclonePath}</code>"
                 button = None
-            msg += f"\n┠<b>Task: </b>#Mirror"
-            msg += f"\n┖<b>By: </b>{self.tag}</blockquote>\n"
+            msg += f"\n<b>By: </b>{self.tag}</blockquote>\n"
             msg += f"\n<b>Sent to cloud storage</b>"
             await sendMessage(self.message, msg, button)
         if self.seed:

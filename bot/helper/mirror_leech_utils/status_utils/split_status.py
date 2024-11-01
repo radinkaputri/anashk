@@ -11,7 +11,7 @@ class SplitStatus:
         self._size = self.listener.size
         self._start_time = time()
         self._proccessed_bytes = 0
-        self.engine = self.set_engine(self.listener.name)
+        self.engine = "Spliter"
 
     def gid(self):
         return self._gid
@@ -60,13 +60,6 @@ class SplitStatus:
     def task(self):
         return self
 
-    def set_engine(self, file_name):
-        media_extensions = ['.mkv', '.mp4', '.avi', '.flv', '.mov', '.mpg', '.mpeg', '.wmv']
-        file_extension = os.path.splitext(file_name)[1].lower()
-        if file_extension in media_extensions:
-            return "FFmpeg"
-        else:
-            return "OS"
 
     async def cancel_task(self):
         LOGGER.info(f"Cancelling Split: {self.listener.name}")
