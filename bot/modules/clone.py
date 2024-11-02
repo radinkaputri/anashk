@@ -11,7 +11,6 @@ from bot.helper.ext_utils.bot_utils import (
     new_task,
     cmd_exec,
     delete_links,
-    send_react,
     arg_parser,
     COMMAND_USAGE,
 )
@@ -67,7 +66,6 @@ class Clone(TaskListener):
 
     @new_task
     async def newEvent(self):
-        await send_react(self.message)
         text = self.message.text.split("\n")
         input_list = text[0].split(" ")
         
