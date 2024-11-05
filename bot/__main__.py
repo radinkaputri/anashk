@@ -20,8 +20,8 @@ from time import time
 
 from bot import (
     bot,
-    bot_name,
     botStartTime,
+    config_dict,
     LOGGER,
     Intervals,
     DATABASE_URL,
@@ -260,8 +260,6 @@ async def restart_notification():
 
 
 async def main():
-  if config_dict["DATABASE_URL"]:
-        await DbManager.db_load()
     await gather(
         sync_to_async(clean_all),
         torrent_search.initiate_search_tools(),
