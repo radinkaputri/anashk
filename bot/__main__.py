@@ -31,7 +31,6 @@ from bot import (
 from .helper.ext_utils.bot_utils import cmd_exec, sync_to_async, create_help_buttons, set_commands
 from .helper.ext_utils.db_handler import DbManager
 from .helper.ext_utils.files_utils import clean_all, exit_clean_up
-from .helper.ext_utils.jdownloader_booter import jdownloader
 from .helper.ext_utils.status_utils import get_readable_file_size, get_readable_time
 from .helper.ext_utils.telegraph_helper import telegraph
 from .helper.listeners.aria2_listener import start_aria2_listener
@@ -133,8 +132,6 @@ async def restart(_, message):
         scheduler.shutdown(wait=False)
     if qb := Intervals["qb"]:
         qb.cancel()
-    if jd := Intervals["jd"]:
-        jd.cancel()
     if st := Intervals["status"]:
         for intvl in list(st.values()):
             intvl.cancel()
@@ -263,7 +260,8 @@ async def restart_notification():
 
 
 async def main():
-    jdownloader.initiate()
+  if config_dict["DATABASE_URL"]:
+        await DbManager.db_load()
     await gather(
         sync_to_async(clean_all),
         torrent_search.initiate_search_tools(),

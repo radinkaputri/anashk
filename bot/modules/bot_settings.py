@@ -35,7 +35,6 @@ from bot import (
     get_qb_client,
     LOGGER,
     bot,
-    jd_downloads,
 )
 from bot.helper.ext_utils.bot_utils import (
     setInterval,
@@ -44,7 +43,6 @@ from bot.helper.ext_utils.bot_utils import (
     retry_function,
 )
 from bot.helper.ext_utils.db_handler import DbManager
-from bot.helper.ext_utils.jdownloader_booter import jdownloader
 from bot.helper.ext_utils.task_manager import start_from_queued
 from bot.helper.mirror_leech_utils.rclone_utils.serve import rclone_serve_booter
 from bot.helper.telegram_helper.bot_commands import BotCommands
@@ -81,7 +79,6 @@ async def get_buttons(key=None, edit_type=None):
         buttons.ibutton("Private Files", "botset private")
         buttons.ibutton("Qbit Settings", "botset qbit")
         buttons.ibutton("Aria2c Settings", "botset aria")
-        buttons.ibutton("JDownloader Sync", "botset syncjd")
         buttons.ibutton("Close", "botset close")
         msg = "Bot Settings:"
     elif edit_type is not None:
@@ -258,8 +255,6 @@ async def edit_variable(_, message, pre_message, key):
         "RCLONE_SERVE_PASS",
     ]:
         await rclone_serve_booter()
-    elif key in ["JD_EMAIL", "JD_PASS"]:
-        jdownloader.initiate()
     elif key == "RSS_DELAY":
         addJob()
 
@@ -309,36 +304,6 @@ async def edit_qbit(_, message, pre_message, key):
     await deleteMessage(message)
     if DATABASE_URL:
         await DbManager().update_qbittorrent(key, value)
-
-
-async def sync_jdownloader():
-    if not DATABASE_URL or jdownloader.device is None:
-        return
-    try:
-        await wait_for(retry_function(jdownloader.update_devices), timeout=10)
-    except:
-        is_connected = await jdownloader.jdconnect()
-        if not is_connected:
-            LOGGER.error(jdownloader.error)
-            return
-        isDeviceConnected = await jdownloader.connectToDevice()
-        if not isDeviceConnected:
-            LOGGER.error(jdownloader.error)
-            return
-    await jdownloader.device.system.exit_jd()
-    if await aiopath.exists("cfg.zip"):
-        await remove("cfg.zip")
-    is_connected = await jdownloader.jdconnect()
-    if not is_connected:
-        LOGGER.error(jdownloader.error)
-        return
-    isDeviceConnected = await jdownloader.connectToDevice()
-    if not isDeviceConnected:
-        LOGGER.error(jdownloader.error)
-    await (
-        await create_subprocess_exec("7z", "a", "cfg.zip", "/JDownloader/cfg")
-    ).wait()
-    await DbManager().update_private_file("cfg.zip")
 
 
 async def update_private_file(_, message, pre_message):
@@ -457,24 +422,6 @@ async def edit_bot_settings(client, query):
         await query.answer()
         globals()["START"] = 0
         await update_buttons(message, None)
-    elif data[1] == "syncjd":
-        if not config_dict["JD_EMAIL"] or not config_dict["JD_PASS"]:
-            await query.answer(
-                "No Email or Password provided!",
-                show_alert=True,
-            )
-            return
-        if jd_downloads:
-            await query.answer(
-                "You can't sync settings while using jdownloader!",
-                show_alert=True,
-            )
-            return
-        await query.answer(
-            "Syncronization Started. JDownloader will get restarted. It takes up to 5 sec!",
-            show_alert=True,
-        )
-        await sync_jdownloader()
     elif data[1] in ["var", "aria", "qbit"]:
         await query.answer()
         await update_buttons(message, data[1])
@@ -532,10 +479,6 @@ async def edit_bot_settings(client, query):
                 INDEX_URLS[0] = ""
         elif data[2] == "INCOMPLETE_TASK_NOTIFIER" and DATABASE_URL:
             await DbManager().trunc_table("tasks")
-        elif data[2] in ["JD_EMAIL", "JD_PASS"]:
-            jdownloader.device = None
-            jdownloader.error = "JDownloader Credentials not provided!"
-            await create_subprocess_exec(["pkill", "-9", "-f", "java"])
         config_dict[data[2]] = value
         await update_buttons(message, "var")
         if DATABASE_URL:

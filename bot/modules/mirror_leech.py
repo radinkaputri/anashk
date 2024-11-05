@@ -35,7 +35,6 @@ from bot.helper.mirror_leech_utils.download_utils.direct_link_generator import (
 )
 from bot.helper.mirror_leech_utils.download_utils.gd_download import add_gd_download
 from bot.helper.mirror_leech_utils.download_utils.mega_download import add_mega_download
-from bot.helper.mirror_leech_utils.download_utils.jd_download import add_jd_download
 from bot.helper.mirror_leech_utils.download_utils.qbit_download import add_qb_torrent
 from bot.helper.mirror_leech_utils.download_utils.rclone_download import (
     add_rclone_download,
@@ -46,7 +45,6 @@ from bot.helper.mirror_leech_utils.download_utils.telegram_download import (
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import sendMessage, get_tg_link_message
-from myjd.exception import MYJDException
 
 
 class Mirror(TaskListener):
@@ -328,16 +326,6 @@ class Mirror(TaskListener):
             )
         elif isinstance(self.link, dict):
             await add_direct_download(self, path)
-        elif self.isJd:
-            try:
-                await add_jd_download(self, path)
-            except (Exception, MYJDException) as e:
-                await sendMessage(self.message, f"{e}".strip())
-                self.removeFromSameDir()
-                return
-            finally:
-                if await aiopath.exists(self.link):
-                    await remove(self.link)
         elif self.isQbit:
             await add_qb_torrent(self, path, ratio, seed_time)
         elif is_rclone_path(self.link):
@@ -371,14 +359,6 @@ async def leech(client, message):
 
 async def qb_leech(client, message):
     Mirror(client, message, isQbit=True, isLeech=True).newEvent()
-
-
-async def jd_mirror(client, message):
-    Mirror(client, message, isJd=True).newEvent()
-
-
-async def jd_leech(client, message):
-    Mirror(client, message, isLeech=True, isJd=True).newEvent()
 
 
 bot.add_handler(
