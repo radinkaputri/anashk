@@ -54,7 +54,6 @@ class Mirror(TaskListener):
         message,
         isQbit=False,
         isLeech=False,
-        isJd=False,
         sameDir=None,
         bulk=None,
         multiTag=None,
@@ -73,7 +72,6 @@ class Mirror(TaskListener):
         super().__init__()
         self.isQbit = isQbit
         self.isLeech = isLeech
-        self.isJd = isJd
 
     @new_task
     async def newEvent(self):
@@ -230,7 +228,6 @@ class Mirror(TaskListener):
                 nextmsg,
                 self.isQbit,
                 self.isLeech,
-                self.isJd,
                 self.sameDir,
                 self.bulk,
                 self.multiTag,
@@ -293,8 +290,7 @@ class Mirror(TaskListener):
             return
 
         if (
-            not self.isJd
-            and not self.isQbit
+            not self.isQbit
             and not is_magnet(self.link)
             and not is_rclone_path(self.link)
             and not is_gdrive_link(self.link)
