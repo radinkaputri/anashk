@@ -119,9 +119,9 @@ async def get_user_settings(from_user):
     else:
         thumb_layout = "None"
 
-    buttons.ibutton("Leech", f"userset {user_id} leech")
+    buttons.ibutton("Leech Tools", f"userset {user_id} leech")
 
-    buttons.ibutton("Rclone", f"userset {user_id} rclone")
+    buttons.ibutton("Rclone Tools", f"userset {user_id} rclone")
     rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
     if user_dict.get("rclone_path", False):
         rccpath = user_dict["rclone_path"]
@@ -130,7 +130,7 @@ async def get_user_settings(from_user):
     else:
         rccpath = "None"
 
-    buttons.ibutton("Gdrive", f"userset {user_id} gdrive")
+    buttons.ibutton("Gdrive Tools", f"userset {user_id} gdrive")
     tokenmsg = "Exists" if await aiopath.exists(token_pickle) else "Not Exists"
     if user_dict.get("gdrive_id", False):
         gdrive_id = user_dict["gdrive_id"]
@@ -158,7 +158,7 @@ async def get_user_settings(from_user):
     dub = "GdriveAPI" if default_upload != "gd" else "Rclone"
     buttons.ibutton(f"{dub} Upload", f"userset {user_id} {default_upload}")
 
-    buttons.ibutton("Exclude Ext", f"userset {user_id} ex_ex")
+    buttons.ibutton("Exclude Extension", f"userset {user_id} ex_ex")
     if user_dict.get("excluded_extensions", False):
         ex_ex = user_dict["excluded_extensions"]
     elif "excluded_extensions" not in user_dict and GLOBAL_EXTENSION_FILTER:
@@ -206,7 +206,7 @@ Name substitution is <b>{ns_msg}</b>
 Excluded Extensions is <code>{ex_ex}</code>
 YT-DLP Options is <b><code>{escape(ytopt)}</code></b>"""
 
-    return text, buttons.build_menu(2)
+    return text, buttons.build_menu(1)
 
 
 async def update_user_settings(query):
@@ -537,7 +537,7 @@ Thumbnail Layout is <b>{thumb_layout}</b>
         await query.answer()
         buttons = ButtonMaker()
         buttons.ibutton("Rclone Config", f"userset {user_id} rcc")
-        buttons.ibutton("Default Rclone Path", f"userset {user_id} rcp")
+        buttons.ibutton("Rclone Path", f"userset {user_id} rcp")
         buttons.ibutton("Back", f"userset {user_id} back")
         buttons.ibutton("Close", f"userset {user_id} close", position="footer")
         rccmsg = "Exists" if await aiopath.exists(rclone_conf) else "Not Exists"
