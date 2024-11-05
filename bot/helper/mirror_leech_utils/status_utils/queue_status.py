@@ -8,7 +8,6 @@ class QueueStatus:
         self._size = self.listener.size
         self._gid = gid
         self._status = status
-        self.engine = "OS"
 
     def gid(self):
         return self._gid

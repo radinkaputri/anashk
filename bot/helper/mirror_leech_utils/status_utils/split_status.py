@@ -11,7 +11,6 @@ class SplitStatus:
         self._size = self.listener.size
         self._start_time = time()
         self._proccessed_bytes = 0
-        self.engine = "Spliter"
 
     def gid(self):
         return self._gid

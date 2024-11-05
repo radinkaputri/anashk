@@ -11,7 +11,6 @@ class MegaDownloadStatus:
         self._size = size
         self._gid = gid
         self.listener = listener
-        self.engine = "MegaSDK"
 
     def name(self):
         return self.listener.name
