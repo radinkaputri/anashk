@@ -59,7 +59,6 @@ from .modules import (
     ytdlp,
     rss,
     shell,
-    speedtest,
     users_settings,
     bot_settings,
     help,
