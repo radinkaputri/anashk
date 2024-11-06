@@ -1,10 +1,12 @@
 from httpx import AsyncClient
 from random import choice
+import datetime
 from asyncio import (
     create_subprocess_exec,
     create_subprocess_shell,
     run_coroutine_threadsafe,
     sleep,
+    Lock,
 )
 from asyncio.subprocess import PIPE
 from pyrogram.types import BotCommand
@@ -24,6 +26,8 @@ from bot.helper.telegram_helper.bot_commands import BotCommands
 THREADPOOL = ThreadPoolExecutor(max_workers=3000)
 
 COMMAND_USAGE = {}
+user_cache = {}
+lock = Lock()
 
 
 class setInterval:
@@ -55,6 +59,16 @@ async def delete_links(message):
                 await message.delete()
         except Exception as e:
             LOGGER.error(str(e))
+
+async def handle_spam_protection(user_id, query, cooldown_seconds=7):
+    async with lock:
+        if user_id in user_cache and datetime.datetime.now() < user_cache[user_id] + datetime.timedelta(seconds=cooldown_seconds):
+            remaining_time = (user_cache[user_id] + datetime.timedelta(seconds=cooldown_seconds)) - datetime.datetime.now()
+            seconds_left = int(remaining_time.total_seconds())
+            await query.answer(f"Don't spam! try again after {seconds_left}s", show_alert=True)
+            return False
+        user_cache[user_id] = datetime.datetime.now()
+    return True
 
 def create_help_buttons():
     buttons = ButtonMaker()

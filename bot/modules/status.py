@@ -24,7 +24,7 @@ from bot import (
     Intervals,
     bot,
 )
-from bot.helper.ext_utils.bot_utils import new_task, sync_to_async
+from bot.helper.ext_utils.bot_utils import new_task, sync_to_async, handle_spam_protection
 from bot.helper.ext_utils.status_utils import (
     MirrorStatus,
     get_readable_file_size,
@@ -80,16 +80,9 @@ async def status_pages(_, query):
     key = int(data[1])
     user_id = query.from_user.id
 
-    async with lock:
-        if user_id in user_cache and datetime.now() < user_cache[user_id] + timedelta(seconds=5):
-            remaining_time = (user_cache[user_id] + timedelta(seconds=5)) - datetime.now()
-            seconds_left = int(remaining_time.total_seconds())
-            await query.answer(f"Don't spam! try again after {seconds_left}s", show_alert=True)
-            return
-
-        user_cache[user_id] = datetime.now()
-
     if data[2] == "ref":
+        if not await handle_spam_protection(user_id, query):
+            return
         await query.answer()
         await update_status_message(key, force=True)
     elif data[2] in ["nex", "pre"]:
