@@ -200,8 +200,6 @@ help_string = f"""
 /{BotCommands.ExecCommand}: Exec sync functions (Only Owner).
 /{BotCommands.ClearLocalsCommand}: Clear {BotCommands.AExecCommand} or {BotCommands.ExecCommand} locals (Only Owner).
 /{BotCommands.RssCommand}: RSS Menu.
-
-<b>powered by <a href="https://t.me/xyradelw">xyradinka</a></b>
 """
 
 

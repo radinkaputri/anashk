@@ -323,7 +323,6 @@ class TaskListener(TaskConfig):
                 msg += f"\n<b>Path: </b><code>{rclonePath}</code>"
                 button = None
             msg += f"\n<b>By: </b>{self.tag}\n"
-            msg += f"\n<b>Sent to cloud storage</b>"
             await sendMessage(self.message, msg, button)
         if self.seed:
             if self.newDir:
